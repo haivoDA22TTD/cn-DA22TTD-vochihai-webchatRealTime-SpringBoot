@@ -1,1 +1,17 @@
-# cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot
+# Tên đề tài: Xây dựng web chat real-time với Angular và Spring Boot
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat&logo=angular&logoColor=white)](https://angular.io/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=flat&logo=sass&logoColor=white)](https://sass-lang.com/)
+  **Giáo viên hướng dẫn:** Ths. Ngô Thanh Huy
+  **Thời gian thực hiện:** Từ ngày 03/11/2025 đến 28/12/2025
+  **Sinh viên thực hiện:** Võ Chí Hải
+  **MSSV:** 110122068
+  **Email:** 1110122068@st.tvu.edu.vn
+  ## 🔹 Công Nghệ Sử Dụng
+- [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)**Spring Boot**: Framework Java mạnh mẽ cho backend, giúp xây dựng API RESTful nhanh chóng và dễ bảo trì.  
+- [![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat&logo=angular&logoColor=white)](https://angular.io/)**Angular**: Framework frontend hiện đại, hỗ trợ xây dựng giao diện động, responsive và modular.  
+- [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)**MySQL**: Hệ quản trị cơ sở dữ liệu quan hệ phổ biến, ổn định, phù hợp cho các ứng dụng web.  
+- [![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=flat&logo=sass&logoColor=white)](https://sass-lang.com/)**SCSS**: CSS preprocessor giúp quản lý style hiệu quả, viết code CSS rõ ràng và dễ mở rộng.
+- [![WebSocket](https://img.shields.io/badge/WebSocket-0078D7?style=flat&logo=websocket&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)**WebSocket**: Giao thức kết nối thời gian thực giữa client và server, hỗ trợ chat, thông báo, streaming dữ liệu.  
+- [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)**Docker**: Công cụ container hóa, giúp triển khai ứng dụng nhất quán trên nhiều môi trường và dễ dàng quản lý phụ thuộc.  
