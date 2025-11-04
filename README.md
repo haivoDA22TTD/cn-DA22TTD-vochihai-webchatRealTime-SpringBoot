@@ -3,10 +3,10 @@
 [![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat&logo=angular&logoColor=white)](https://angular.io/)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=flat&logo=sass&logoColor=white)](https://sass-lang.com/)<br>
-  **Giáo viên hướng dẫn:** Ths. Ngô Thanh Huy
-  **Thời gian thực hiện:** Từ ngày 03/11/2025 đến 28/12/2025
-  **Sinh viên thực hiện:** Võ Chí Hải
-  **MSSV:** 110122068
+  **Giáo viên hướng dẫn:** Ths. Ngô Thanh Huy<br>
+  **Thời gian thực hiện:** Từ ngày 03/11/2025 đến 28/12/2025<br>
+  **Sinh viên thực hiện:** Võ Chí Hải<br>
+  **MSSV:** 110122068<br>
   **Email:** 1110122068@st.tvu.edu.vn
   ## 🔹 Công Nghệ Sử Dụng
 - [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)**Spring Boot**: Framework Java mạnh mẽ cho backend, giúp xây dựng API RESTful nhanh chóng và dễ bảo trì.  
@@ -15,3 +15,10 @@
 - [![SCSS](https://img.shields.io/badge/SCSS-CC6699?style=flat&logo=sass&logoColor=white)](https://sass-lang.com/)**SCSS**: CSS preprocessor giúp quản lý style hiệu quả, viết code CSS rõ ràng và dễ mở rộng.
 - [![WebSocket](https://img.shields.io/badge/WebSocket-0078D7?style=flat&logo=websocket&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)**WebSocket**: Giao thức kết nối thời gian thực giữa client và server, hỗ trợ chat, thông báo, streaming dữ liệu.  
 - [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)**Docker**: Công cụ container hóa, giúp triển khai ứng dụng nhất quán trên nhiều môi trường và dễ dàng quản lý phụ thuộc.  
+## Mô tả hệ thống
+ Dự án **web Chat Realtime** là một hệ thống trò chuyện trực tuyến được xây dựng bằng **Angular**, **SCSS** cho giao diện hiện đại và **Spring Boot**, **MySQL** cho xử lý và lưu trữ dữ liệu phía server. Ứng dụng cho phép chat 1-1, chat nhóm, tạo nhóm mới, chuyển quyền trưởng nhóm, hỗ trợ dark mode giúp trải nghiệm thân thiện với người dùng. Người dùng có thể upload avatar cá nhân, xem danh sách người dùng online, các cuộc trò chuyện gần đây, đồng thời mỗi tin nhắn đều hiển thị thời gian gửi và trạng thái đã xem. Hệ thống mang đến trải nghiệm trò chuyện mượt mà, realtime và bảo mật, đáp ứng nhu cầu giao tiếp nhanh chóng, tiện lợi trong môi trường trực tuyến.
+## Cơ sở dữ liệu
+<p align="center">
+  <img width="1207" height="703" alt="image" src="https://github.com/user-attachments/assets/e5c96520-4266-4b05-b219-cc4f649b73a7" />
+
+</p>
