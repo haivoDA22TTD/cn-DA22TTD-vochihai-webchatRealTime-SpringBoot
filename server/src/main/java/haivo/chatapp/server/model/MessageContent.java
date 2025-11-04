@@ -1,5 +1,6 @@
 package haivo.chatapp.server.model;
 
+import haivo.chatapp.server.enums.MessageType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,9 +21,10 @@ public class MessageContent {
     @Id
     @GeneratedValue(generator = "UUID", strategy = GenerationType.AUTO)
     private UUID id;
+    private String content;
 
     @CreatedDate
-    private LocalDateTime dataSent;
+    private LocalDateTime dateSent;
 
     @Enumerated(EnumType.STRING)
     private MessageType messageType;

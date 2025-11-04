@@ -1,5 +1,6 @@
 package haivo.chatapp.server.model;
 
+import haivo.chatapp.server.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

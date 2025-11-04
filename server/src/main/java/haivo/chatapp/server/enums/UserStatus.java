@@ -1,4 +1,4 @@
-package haivo.chatapp.server.model;
+package haivo.chatapp.server.enums;
 
 public enum UserStatus {
    ONLINE,
