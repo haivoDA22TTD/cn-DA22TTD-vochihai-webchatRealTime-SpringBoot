@@ -1,5 +1,5 @@
 export const environment = {
     production:true,
-    apiUrl:'http://localhost:8081/',
-    apiVersion:'api/v1/'
+    apiUrl:'http://my-deploy-url/',
+    apiVersion:'api/v14/'
 }
