@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-
+import { CompatClient, Stomp } from '@stomp/stompjs';
+import * as SockJS from 'sockjs-client';
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private apiUrl = environment.apiUrl + environment.apiVersion +'users';
+  private websocketUrl = environment.apiUrl + environment.webSocketUrl;
+  private stompClient: CompatClient = {} as CompatClient;
+  private subscriptionActiveUsers: any;
+  private activeUsersSubject = new Subject<User>();
   constructor(
     private http:HttpClient,
   ) { 
@@ -24,5 +29,39 @@ export class UserService {
       avatarUrl: user.avatarUrl
   }));
   }
+
+  getFromLocalStorage(): User {
+    return JSON.parse(localStorage.getItem('user') ?? '{}');
+  }
+  connect(user: User){
+    const socket = new SockJS(this.websocketUrl)
+    this.stompClient = Stomp.over(socket);
+    this.stompClient.connect(
+      {},
+      () => this.onConnect(user),
+      (error: any) => console.log(error)
+    );
+  }
+  onConnect(user: User){
+    this.subscribeActive();
+    this.sendConnect(user);
+  }
+  subscribeActive(){
+    this.subscriptionActiveUsers = this.stompClient.subscribe('/topic/active',(message: any)=>{
+      const user = JSON.parse(message);
+      console.log(user);
+      this.activeUsersSubject.next(user)
+    });
+  }
+  sendConnect(user: User){
+    this.stompClient.send(
+      'app/user/connect',
+      {},
+      JSON.stringify(user)
+    );
+  }
+  subscribeActiveUsers(): Observable<User> {
+  return this.activeUsersSubject.asObservable();
+}
 
 }

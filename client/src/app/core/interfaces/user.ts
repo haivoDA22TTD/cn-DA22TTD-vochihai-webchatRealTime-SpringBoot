@@ -1,7 +1,7 @@
 export interface User {
     username?: string,
     passsword?: string,
-    status: Status,
+    status?: Status,
     avatarUrl?: string
 }
 
