@@ -17,6 +17,10 @@
 - [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)**Docker**: Công cụ container hóa, giúp triển khai ứng dụng nhất quán trên nhiều môi trường và dễ dàng quản lý phụ thuộc.  
 ## Mô tả hệ thống
  Dự án **web Chat Realtime** là một hệ thống trò chuyện trực tuyến được xây dựng bằng **Angular**, **SCSS** cho giao diện hiện đại và **Spring Boot**, **MySQL** cho xử lý và lưu trữ dữ liệu phía server. Ứng dụng cho phép chat 1-1, chat nhóm, tạo nhóm mới, chuyển quyền trưởng nhóm, hỗ trợ dark mode giúp trải nghiệm thân thiện với người dùng. Người dùng có thể upload avatar cá nhân, xem danh sách người dùng online, các cuộc trò chuyện gần đây, đồng thời mỗi tin nhắn đều hiển thị thời gian gửi và trạng thái đã xem. Hệ thống mang đến trải nghiệm trò chuyện mượt mà, realtime và bảo mật, đáp ứng nhu cầu giao tiếp nhanh chóng, tiện lợi trong môi trường trực tuyến.
+## Sơ đồ kiến trúc hệ thống
+<p align="center>
+<img width="946" height="402" alt="image" src="https://github.com/user-attachments/assets/aba6c0fe-703d-4488-8e6b-b5f33a758d6f" />
+</p>
 ## Cơ sở dữ liệu
 <p align="center">
   <img width="775" height="733" alt="image" src="https://github.com/user-attachments/assets/5eb35b0b-0783-4725-adc4-ff64f8d6637e" />
