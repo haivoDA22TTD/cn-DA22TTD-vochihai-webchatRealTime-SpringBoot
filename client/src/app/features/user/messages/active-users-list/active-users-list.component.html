@@ -1,0 +1,63 @@
+<div class="conversation-active-users-wrapper">
+    <div class="conversation-active-users-title">
+        Active users
+    </div>
+
+    <div class="conversation-active-users">
+        <div class="active-user">
+            <app-avatar [width]="'56px'" 
+                        [isOnline]="true"
+                        [username] = "currentUser.username"
+                        [avatarUrl]="currentUser.avatarUrl"></app-avatar>
+            <!--<div class="online">
+                <img style="width: 56px; height:56px; object-fit:cover; border-radius: 50%;"
+                [src]="currentUser.avatarUrl">
+            </div> -->
+            <small>Bạn</small>
+        </div> 
+
+        <!-- <div class="active-user">
+            <div class="online">
+                <img style="width: 56px; height:56px; object-fit:cover; border-radius: 50%;"
+                src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+            </div>
+            <small>Nguyen</small>
+        </div>
+
+        <div class="active-user">
+            <div class="online">
+                <img style="width: 56px; height:56px; object-fit:cover; border-radius: 50%;"
+                src="https://randomuser.me/api/portraits/women/44.jpg" alt="">
+            </div>
+            <small>Lan</small>
+        </div>
+
+        <div class="active-user">
+            <div class="online">
+                <img style="width: 56px; height:56px; object-fit:cover; border-radius: 50%;"
+                src="https://randomuser.me/api/portraits/men/56.jpg" alt="">
+            </div>
+            <small>Minh</small>
+        </div>
+    </div>
+
+    <div class="conversation-detail">
+        <div class="conversation-username">Nguyen</div>
+        <div class="conversation-content">
+            <span>Hi there</span>
+            <span class="conversation-data">
+                <span>.</span>
+                18m
+            </span>
+        </div> -->
+        <ng-container *ngFor="let u of activeUsers">
+            <div *ngIf="u.username !== currentUser.username" class="active-user">
+            <app-avatar [width]="'56px'" 
+                        [isOnline]="true"
+                        [username] = "u.username"
+                        [avatarUrl]="u.avatarUrl"></app-avatar>
+            <small>{{u.username}}</small>
+        </div>
+        </ng-container>
+    </div>
+</div>
