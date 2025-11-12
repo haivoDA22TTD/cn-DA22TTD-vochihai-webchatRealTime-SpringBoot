@@ -21,7 +21,7 @@ export class AvatarComponent {
       this.height = this.width;
     }
     if(!this.avatarUrl){
-      this.avatarUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhflUak7beHey2BX42U6soIRA&s';
+      this.avatarUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNL_ZnOTpXSvhf1UaK7beHey2BX42U6solRA&s';
     }
   }
 }

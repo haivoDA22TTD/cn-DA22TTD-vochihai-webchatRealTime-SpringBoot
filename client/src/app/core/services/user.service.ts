@@ -39,6 +39,11 @@ export class UserService {
   getFromLocalStorage(): User {
     return JSON.parse(localStorage.getItem('user') ?? '{}');
   }
+  
+  removeFromLocalStorage() {
+    localStorage.removeItem('user');
+  }
+
   connect(user: User){
     const socket = new SockJS(this.websocketUrl)
     this.stompClient = Stomp.over(socket);
@@ -48,31 +53,50 @@ export class UserService {
       (error: any) => console.log(error)
     );
   }
-  onConnect(user: User){
+  private onConnect(user: User){
     this.subscribeActive();
     this.sendConnect(user);
   }
-  subscribeActive(){
-    this.subscriptionActiveUsers = this.stompClient.subscribe('/topic/active',(message: any)=>{
-      const user = JSON.parse(message);
+   private subscribeActive() {
+    this.subscriptionActiveUsers = this.stompClient.subscribe('/topic/active', (message: any) => {
+      const user = JSON.parse(message.body);
       console.log(user);
-      this.activeUsersSubject.next(user)
+      this.activeUsersSubject.next(user);
     });
   }
   sendConnect(user: User){
     this.stompClient.send(
-      'app/user/connect',
+      '/app/user/connect',
       {},
       JSON.stringify(user)
     );
   }
-  subscribeActiveUsers(): Observable<User> {
-  return this.activeUsersSubject.asObservable();
-}
+
+   disconnect(user: User) {
+    this.sendDisconnect(user);
+    this.stompClient.disconnect(() => {
+      console.log('disconnect');
+    });
+    this.subscriptionActiveUsers?.unsubscribe();
+  }
+
+  sendDisconnect(user: User) {
+    this.stompClient.send(
+      '/app/user/disconnect',
+      {},
+      JSON.stringify(user)
+    );
+  }
+
+   subscribeActiveUsers(): Observable<User> {
+    return this.activeUsersSubject.asObservable();
+  }
+
   getOnlineUsers(): Observable<User[]>{
     const url = this.apiUrl + '/online';
     return this.http.get<User[]>(url);
   }
+
   getUserStatus(username?: string): boolean{
     if(!username) return false;
     return this.activeUsers[username] === 'ONLINE';

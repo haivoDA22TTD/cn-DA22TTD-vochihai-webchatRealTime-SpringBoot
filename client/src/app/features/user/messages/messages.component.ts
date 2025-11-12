@@ -10,6 +10,7 @@ import { UserService } from 'src/app/core/services/user.service';
 export class MessagesComponent {
   currentUser: User = {};
   activeUsersSubscription: any;
+  isShowDialogChat: boolean = false;
 
   constructor(  
     private userService: UserService
@@ -18,6 +19,10 @@ export class MessagesComponent {
   ngOnInit(){
     this.currentUser = this.userService.getFromLocalStorage();
     this.userService.connect(this.currentUser);
+    window.addEventListener('beforeunload', () => {
+      this.userService.disconnect(this.currentUser);
+    });
+
     this.activeUsersSubscription = this.userService.subscribeActiveUsers().subscribe({
       next: (user: User) =>{
           console.log(user)
@@ -27,5 +32,10 @@ export class MessagesComponent {
       },
     });
   }
-
+  ngOnDestroy() {
+    this.userService.disconnect(this.currentUser);
+  }
+  chat(selectedUsers: User){
+    console.log(selectedUsers);
+  }
 }

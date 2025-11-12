@@ -14,11 +14,11 @@ export class ActiveUsersListComponent {
   activeUsersSubscription: any;
 
   constructor(
-    private userService: UserService
+    public userService: UserService
   ){}
   async ngOnInit(){
     this.activeUsers = await lastValueFrom(this.userService.getOnlineUsers());
-    this.activeUsers?.forEach((u:User) =>{
+    this.activeUsers?.forEach((u: User) =>{
       if(u.username){
           this.userService.activeUsers[u.username] = 'ONLINE';
       }
@@ -34,9 +34,11 @@ export class ActiveUsersListComponent {
       next:(user: User) =>{
         console.log(user);
         if(user.status === Status.OFFLINE){
-          this.activeUsers = this.activeUsers.filter((u: User) => u.username); 
-        }else if(!this.activeUsers.some(existingUser => existingUser.username !== user.username)){
+          this.activeUsers = this.activeUsers.filter((u: User) => u.username !== user.username);
+          if(user.username) delete this.userService.activeUsers[user.username]; 
+        }else if(!this.activeUsers.some(existingUser => existingUser.username === user.username)){
                   this.activeUsers = [...this.activeUsers, user];
+                 if(user.username) this.userService.activeUsers[user.username] = 'ONLINE';
         }
       }, 
       error(err){
