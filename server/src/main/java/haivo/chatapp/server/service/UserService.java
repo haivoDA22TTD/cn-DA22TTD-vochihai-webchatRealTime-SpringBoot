@@ -57,4 +57,13 @@ public class UserService {
                 .map(u -> userMapper.toDTO(u, new UserDTO()))
                 .toList();
     }
+    public UserDTO logout(final String username) {
+        Optional<User> user = userRepository.findById(username);
+        user.ifPresent(u -> {
+            u.setStatus(UserStatus.OFFLINE);
+            u.setLastLogin(LocalDateTime.now());
+            userRepository.save(u);
+        });
+        return user.map((u -> userMapper.toDTO(u, new UserDTO()))).orElse(null);
+    }
 }

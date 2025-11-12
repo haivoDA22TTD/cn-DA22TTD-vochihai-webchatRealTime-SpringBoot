@@ -22,19 +22,21 @@ public class UserController {
         return ResponseEntity.ok(userService.login(userDTO));
     }
 
-    @MessageMapping("user/connect")
+    @MessageMapping("/user/connect")
     @SendTo("/topic/active")
     public UserDTO connect(@RequestBody UserDTO userDTO) {
         return userService.connect(userDTO);
     }
 
-    /*@PostMapping("/online")
-    public ResponseEntity<List <UserDTO>> getOnlineUsers(){
-        return ResponseEntity.ok(userService.getOnlineUsers());
-    }*/
+    @MessageMapping("/user/disconnect")
+    @SendTo("/topic/active")
+    public UserDTO disconnect(@RequestBody UserDTO userDTO) {
+        return userService.logout(userDTO.getUsername());
+    }
+
 
     @GetMapping("/online")
-    public ResponseEntity<List <UserDTO>> getOnlineUsers() {
+    public ResponseEntity<List<UserDTO>> getOnlineUsers() {
         return ResponseEntity.ok(userService.getOnlineUsers());
     }
 }
