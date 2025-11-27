@@ -1,0 +1,10 @@
+<div [class.online]="isOnline !== undefined
+                      ? isOnline
+                      : userService.getUserStatus(username)"
+  (click)="onUploadAvatar()"
+  style="cursor: pointer;">
+  <img style="object-fit: cover; border-radius: 50%;"
+    [style.width]="width"
+    [style.height]="height"
+    [src]="avatarUrl" alt="">
+</div>

@@ -1,0 +1,31 @@
+<div class="conversation-active-users-wrapper">
+
+  <div class="conversation-active-users-title">
+    Người dùng đang hoạt động
+  </div>
+  
+  <div class="conversation-active-users">
+    <div class="active-user">
+      <app-avatar 
+        [width]="'56px'" 
+        [isOnline]="true" 
+        [username]="currentUser.username" 
+        [avatarUrl]="currentUser.avatarUrl">
+      </app-avatar>
+     
+      <small>Bạn</small>
+    </div>
+
+    <ng-container *ngFor="let u of activeUsers">
+      <div *ngIf="u.username !== currentUser.username" class="active-user">
+        <app-avatar 
+          [width]="'56px'" 
+          [isOnline]="true" 
+          [username]="u.username" 
+          [avatarUrl]="u.avatarUrl">
+        </app-avatar>
+        <small>{{u.username}}</small>
+      </div>
+    </ng-container>
+  </div>
+</div>
