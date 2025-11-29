@@ -23,7 +23,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Build Spring Boot
-      working-directory: backend
+      working-directory: src/backend
       run: ./mvnw clean install
 
     - name: Set up Node.js 20.19.5
@@ -32,14 +32,13 @@ jobs:
         node-version: '20.19.5'
 
     - name: Install Angular dependencies
-      working-directory: frontend
+      working-directory: src/frontend
       run: npm install
 
     - name: Build Angular app
-      working-directory: frontend
+      working-directory: src/frontend
       run: npm run build --prod
 
     - name: Deploy to server
       run: |
-        # Chèn mã deploy của bạn ở đây
         echo "Deploy to server"
