@@ -37,11 +37,11 @@ jobs:
 
     - name: Install Angular dependencies
       working-directory: src/frontend
-      run: npm install
+      run: npm install --legacy-peer-deps
 
     - name: Build Angular app
       working-directory: src/frontend
-      run: npm run build --prod --disable-host-check
+      run: npm run build --prod --max_old_space_size=4096 --disable-host-check
 
     - name: Deploy to server
       run: |
