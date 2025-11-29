@@ -22,6 +22,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Make mvnw executable
+      working-directory: src/backend
+      run: chmod +x mvnw
+
     - name: Build Spring Boot
       working-directory: src/backend
       run: ./mvnw clean install
