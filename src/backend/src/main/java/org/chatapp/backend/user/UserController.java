@@ -1,5 +1,6 @@
 package org.chatapp.backend.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -16,42 +17,42 @@ public class UserController {
 
     private final UserService userService;
 
-
+    @Operation(summary = "Xác thực người dùng")
     @PostMapping
     public ResponseEntity<UserDTO> login(@RequestBody final UserDTO userDTO) {
         return ResponseEntity.ok(userService.login(userDTO));
     }
 
-
-    @MessageMapping("/user/connect") // Receives message from clients sending to /app/user/connect
-    @SendTo("/topic/active") // Send the response to all clients subscribe to /topic/active
+    @Operation(summary = "Gửi tin nhắn đến người dùng đang kết nối")
+    @MessageMapping("/user/connect")
+    @SendTo("/topic/active")
     public UserDTO connect(@RequestBody UserDTO userDTO) {
         return userService.connect(userDTO);
     }
 
 
-
-    @MessageMapping("/user/disconnect") // Receives message from clients sending to /app/user/disconnect
-    @SendTo("/topic/active") // Send the response to all clients subscribe to /topic/active
+    @Operation(summary = "Gửi tin nhắn đến ngưởi dùng đã ngắt keets nối")
+    @MessageMapping("/user/disconnect")
+    @SendTo("/topic/active")
     public UserDTO disconnect(@RequestBody UserDTO userDTO) {
         return userService.logout(userDTO.getUsername());
     }
 
-
+    @Operation(summary = "Hiển thị người dùng đang hoạt động")
     @GetMapping("/online")
     public ResponseEntity<List<UserDTO>> getOnlineUsers() {
         return ResponseEntity.ok(userService.getOnlineUsers());
     }
 
 
-
+    @Operation(summary = "Tìm kiếm người dùng theo tên")
     @GetMapping("/search/{username}")
     public ResponseEntity<List<UserDTO>> searchUsersByUsername(@PathVariable final String username) {
         return ResponseEntity.ok(userService.searchUsersByUsername(username));
     }
 
 
-
+    @Operation(summary = "Cập nhật ảnh đại diện")
     @PostMapping("/avatar")
     public ResponseEntity<UserDTO> uploadAvatar(@RequestParam final MultipartFile file,
                                                 @RequestParam final String username) {

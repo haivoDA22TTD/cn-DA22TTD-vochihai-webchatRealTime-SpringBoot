@@ -1,5 +1,6 @@
 package org.chatapp.backend.messageroommember;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ public class MessageRoomMemberController {
     private final MessageRoomMemberService messageRoomMemberService;
 
 
-
+    @Operation(summary = "Hiển thị tin nhắn đã xem")
     @PostMapping("/update-last-seen/{roomId}/{username}")
     public ResponseEntity<MessageRoomMemberDTO> updateLastSeen(@PathVariable final UUID roomId,
                                                                @PathVariable final String username) {
@@ -23,7 +24,7 @@ public class MessageRoomMemberController {
     }
 
 
-
+    @Operation(summary = "Thêm thành viên vào nhóm chat")
     @PostMapping("/add-members/{roomId}")
     public ResponseEntity<List<MessageRoomMemberDTO>> addMembers(@PathVariable final UUID roomId,
                                                            @RequestBody final List<MessageRoomMemberDTO> memberDTOS) {
@@ -31,7 +32,7 @@ public class MessageRoomMemberController {
     }
 
 
-
+    @Operation(summary = "Xóa thành viên khỏi nhóm chat")
     @DeleteMapping("/remove-member/{roomId}/{memberId}")
     public ResponseEntity<Boolean> removeMember(@PathVariable final UUID roomId,
                                                              @PathVariable final String memberId) {
@@ -39,7 +40,7 @@ public class MessageRoomMemberController {
     }
 
 
-
+    @Operation(summary = "Trao quyền trưởng nhóm cho một thành viên trong nhóm")
     @PostMapping("/make-admin/{roomId}/{memberId}")
     public ResponseEntity<MessageRoomMemberDTO> makeAdmin(@PathVariable final UUID roomId,
                                                           @PathVariable final String memberId) {
@@ -47,7 +48,7 @@ public class MessageRoomMemberController {
     }
 
 
-
+    @Operation(summary = "Xóa quyền trưởng nhóm của một thành viên trong nhóm chat")
     @PostMapping("/remove-admin/{roomId}/{memberId}")
     public ResponseEntity<MessageRoomMemberDTO> removeAdmin(@PathVariable final UUID roomId,
                                                           @PathVariable final String memberId) {
