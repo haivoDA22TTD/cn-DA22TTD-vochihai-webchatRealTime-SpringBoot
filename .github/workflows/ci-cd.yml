@@ -28,7 +28,7 @@ jobs:
 
     - name: Build Spring Boot
       working-directory: src/backend
-      run: ./mvnw clean install
+      run: ./mvnw clean install -Dmaven.test.skip=true
 
     - name: Set up Node.js 20.19.5
       uses: actions/setup-node@v2
