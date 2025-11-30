@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageContent, MessageType } from 'src/app/core/interfaces/message-content';
 import { MessageRoom } from 'src/app/core/interfaces/message-room';
@@ -15,7 +15,7 @@ import { UserService } from 'src/app/core/services/user.service';
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss']
 })
-export class MessagesComponent {
+export class MessagesComponent implements OnInit, OnDestroy{
 
   currentUser: User = {};
   activeUsersSubscription: any;
@@ -23,6 +23,10 @@ export class MessagesComponent {
   selectedMessageRoom: MessageRoom = {};
   messageToSend: MessageContent = {};
   messageRooms: MessageRoom[] = [];
+
+ // Thêm thuộc tính để hiển thị thông báo spam cụ thể
+  isSpamBlocked: boolean = true;
+  spamErrorMessage: string = 'Bạn đang gửi tin nhắn quá nhanh. Vui lòng chờ một chút trước khi gửi tin nhắn tiếp theo.';
 
   themeMode: boolean = this.themeService.themeMode === 'dark' ? true : false;
   themeColor = this.themeService.getGetThemeColorObject(this.themeService.themeColor);
@@ -44,7 +48,8 @@ export class MessagesComponent {
 
     this.userService.connect(this.currentUser);
     this.messageContentService.connect(this.currentUser);
-    
+    // Thêm subscription để nhận thông báo lỗi
+    //this.subscribeToErrorMessages();
     window.addEventListener('beforeunload', () => {
       this.userService.disconnect(this.currentUser);
     });
@@ -171,22 +176,33 @@ export class MessagesComponent {
 
 
 
-  sendMessage() {
-    this.messageToSend = {
-      content: this.messageToSend.content,
+ sendMessage() {
+    // Kiểm tra nội dung tin nhắn có rỗng không
+    if (!this.messageToSend.content || this.messageToSend.content.trim() === '') {
+      return;
+    }
+
+    const messageToSend: MessageContent = {
+      content: this.messageToSend.content.trim(),
       messageRoomId: this.selectedMessageRoom.id,
       sender: this.currentUser.username,
       messageType: MessageType.TEXT
-    }
+    };
 
-    this.messageContentService.sendMessage(this.messageToSend);
-
-    console.log('this.messageToSend', this.messageToSend);
-
+    // Gửi tin nhắn
+    this.messageContentService.sendMessage(messageToSend);
+    
+    // Reset các giá trị sau khi gửi
     this.messageToSend = {};
+    this.isSpamBlocked = false;
+    this.spamErrorMessage = '';
   }
 
-
+  // Thêm phương thức clearSpamError để xóa thông báo lỗi spam
+  clearSpamError(): void {
+    this.isSpamBlocked = false;
+    this.spamErrorMessage = '';
+  }
 
   logout() {
     this.userService.disconnect(this.currentUser);

@@ -62,7 +62,16 @@
           [currentUser]="currentUser"
           style="flex-grow: 1;">
         </app-message-contents-list>
-        
+        <!-- Thêm phần hiển thị thông báo lỗi spam ngay phía trên form nhập tin nhắn -->
+  <div *ngIf="isSpamBlocked" class="spam-error-notification">
+    <div class="spam-error-content">
+      <span class="spam-error-icon">⚠️</span>
+      <span class="spam-error-message">{{ spamErrorMessage }}</span>
+      <button class="spam-error-close" (click)="clearSpamError()" title="Đóng thông báo">
+        ×
+      </button>
+    </div>
+  </div>
         <div style="text-align: center;">
           <span class="material-symbols-rounded">arrow_upward</span>
         </div>
@@ -75,9 +84,9 @@
           </div>
           <input [(ngModel)]="messageToSend.content" 
             (keydown.enter)="sendMessage()"
-            type="text" class="p-inputtext" id="message-input" placeholder="Type something here..." name="content" autofocus
+            type="text" class="p-inputtext" id="message-input" placeholder="Type something here..." name="content" autofocus [disabled]="isSpamBlocked"
             style="background-color: transparent;"/>
-          <span (click)="sendMessage()" class="send-button material-symbols-rounded">Send</span>
+          <span (click)="sendMessage()" class="send-button material-symbols-rounded" [class.disabled]="isSpamBlocked">Send</span>
         </form>
       </div>
     

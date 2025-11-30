@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class ThemeService {
 
   private _themeMode: string = 'light';
-  private _themeColor: string = 'blue';
+  private _themeColor: string = 'pink';
 
   get themeMode(): string {
     return this._themeMode

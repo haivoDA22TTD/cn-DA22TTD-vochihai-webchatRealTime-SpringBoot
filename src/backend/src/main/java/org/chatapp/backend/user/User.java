@@ -1,10 +1,7 @@
 package org.chatapp.backend.user;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import  jakarta.persistence.*;
+import  lombok.*;
 import org.chatapp.backend.messagecontent.MessageContent;
 import org.chatapp.backend.messageroom.MessageRoom;
 import org.chatapp.backend.messageroommember.MessageRoomMember;

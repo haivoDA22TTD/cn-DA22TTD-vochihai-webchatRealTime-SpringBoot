@@ -367,3 +367,70 @@ p-dialog ::ng-deep {
   right: 2px;
   bottom: 2px;
 }
+
+// CSS cho thông báo lỗi spam
+.spam-error-notification {
+  margin: 12px 20px;
+}
+
+.spam-error-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.spam-error-icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.spam-error-message {
+  flex-grow: 1;
+  color: #dc2626;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.spam-error-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #dc2626;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.spam-error-close:hover {
+  background-color: #fecaca;
+}
+
+// CSS cho việc vô hiệu hóa input và nút gửi khi bị chặn spam
+.chat-footer input[disabled] {
+  background-color: #f3f4f6 !important;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.send-button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+// Đảm bảo nút gửi không thể click khi bị vô hiệu hóa
+.send-button.disabled:hover {
+  opacity: 0.6;
+}

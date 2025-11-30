@@ -1,10 +1,7 @@
 package org.chatapp.backend.messagecontent;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import  lombok.*;
 import org.chatapp.backend.messageroom.MessageRoom;
 import org.chatapp.backend.user.User;
 import org.springframework.data.annotation.CreatedDate;

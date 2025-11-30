@@ -2,6 +2,9 @@ package org.chatapp.backend.user;
 
 import lombok.RequiredArgsConstructor;
 import org.chatapp.backend.utils.FileUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-
+    @Cacheable(value = "users", key = "#userDTO.username")
     public UserDTO login(final UserDTO userDTO) {
         final User user = userRepository.findById(userDTO.getUsername())
                 .orElseGet(() -> createUser(userDTO));
@@ -34,7 +37,7 @@ public class UserService {
         }
     }
 
-
+    @CachePut(value = "users", key = "#result.username")
     private User createUser(UserDTO userDTO) {
         final User user = User.builder()
                 .username(userDTO.getUsername())
@@ -45,7 +48,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
+    @CachePut(value = "users", key = "#userDTO.username")
     public UserDTO connect(UserDTO userDTO) {
         Optional<User> user = userRepository.findById(userDTO.getUsername());
         user.ifPresent(u -> {
@@ -56,7 +59,7 @@ public class UserService {
     }
 
 
-
+    @Cacheable(value = "onlineUsers", cacheNames = "onlineUsers", sync = true)
     public List<UserDTO> getOnlineUsers() {
         return userRepository.findAllByStatus(UserStatus.ONLINE)
                 .stream()
@@ -65,6 +68,7 @@ public class UserService {
     }
 
 
+    @CacheEvict(value = "users", key = "#username")
 
     public UserDTO logout(final String username) {
         Optional<User> user = userRepository.findById(username);
@@ -77,7 +81,7 @@ public class UserService {
     }
 
 
-
+    @Cacheable(value = "userSearch", key = "#username")
     public List<UserDTO> searchUsersByUsername(final String username) {
         return userRepository.findAllByUsernameContainingIgnoreCase(username)
                 .stream()
@@ -86,7 +90,7 @@ public class UserService {
     }
 
 
-
+    @CacheEvict(value = "users", key = "#username")
     public UserDTO uploadAvatar(final MultipartFile file, final String username) {
         final Optional<User> user = userRepository.findById(username);
 
