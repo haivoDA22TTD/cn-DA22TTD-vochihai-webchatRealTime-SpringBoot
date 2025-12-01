@@ -44,7 +44,7 @@ public class MessageRoomService {
 
     @CachePut(
             value = "roomByMembers",
-            key = "#result != null && #result.members != null && !#result.members.isEmpty() ? #result.members.stream().map(m -> m.username).sorted().collect(Collectors.toList()).hashCode() + '_' + #result.members.size() : 'empty'",
+            key = "@roomKeyHelper.key(#result)",
             unless = "#result == null"
     )
     @Transactional
