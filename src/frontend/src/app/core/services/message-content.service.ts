@@ -11,8 +11,7 @@ import { MessageContent } from '../interfaces/message-content';
   providedIn: 'root'
 })
 export class MessageContentService {
- private apiUrl = environment.apiUrl + environment.apiVersion + 'messagecontents';
- 
+  private apiUrl = environment.apiUrl + environment.apiVersion + 'messagecontents';
   private webSocketUrl = environment.apiUrl + environment.webSocketUrl;
   private stompClient: CompatClient = {} as CompatClient;
   private subscriptionMessages: any;

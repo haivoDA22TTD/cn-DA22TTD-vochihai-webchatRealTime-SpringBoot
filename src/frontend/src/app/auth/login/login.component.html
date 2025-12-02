@@ -1,16 +1,40 @@
 <div class="wrapper">
+    <!-- Form đăng nhập -->
   <form>
-    <h1>Login</h1>
+    <h1>Đăng nhập</h1>
+    <!-- Ô nhập tên đăng nhập -->
     <div class="p-fluid">
-      <input [(ngModel)]="user.username" type="text" pInputText placeholder="Username" name="username"
+       <!-- 
+        [(ngModel)]="user.username"  : two-way binding, gán giá trị vào user.username
+        pInputText                   : directive của PrimeNG cho input style đẹp
+        placeholder="Tên đăng nhập"  : gợi ý trong ô nhập
+        name="username"              : bắt buộc khi dùng ngModel trong form
+        (keyup.enter)="login()"      : nhấn Enter để gọi hàm login()
+      -->
+      <input [(ngModel)]="user.username" type="text" pInputText placeholder="Tên đăng nhập" name="username"
         (keyup.enter)="login()">
     </div>
+      <!-- Ô nhập mật khẩu -->
     <div class="p-fluid">
-      <p-password [(ngModel)]="user.password" placeholder="Password" [feedback]="false" [toggleMask]="true" name="password"
+       <!-- 
+        p-password                     : component mật khẩu của PrimeNG
+        [(ngModel)]="user.password"    : two-way binding cho password
+        [feedback]="false"             : tắt thanh đánh giá độ mạnh mật khẩu
+        [toggleMask]="true"            : nút hiện/ẩn mật khẩu
+        name="password"                : tên control cho form
+        (keyup.enter)="login()"        : nhấn Enter để đăng nhập
+      -->
+      <p-password [(ngModel)]="user.password" placeholder="Mật khẩu" [feedback]="false" [toggleMask]="true" name="password"
         (keyup.enter)="login()" />
     </div>
+    <!-- Nút đăng nhập -->
     <div class="p-fluid mt-2">
-      <p-button (click)="login()" label="Login" [disabled]="!user.username || !user.password"></p-button>
+       <!-- 
+        (click)="login()"              : click nút → gọi hàm login()
+        [disabled]="!user.username || !user.password"  
+                                       : disable nút nếu chưa nhập đủ thông tin
+      -->
+      <p-button (click)="login()" label="Đăng nhập" [disabled]="!user.username || !user.password"></p-button>
     </div>
   </form>
 </div>

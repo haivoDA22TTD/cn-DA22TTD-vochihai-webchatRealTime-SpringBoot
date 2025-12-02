@@ -15,7 +15,6 @@ import { TimeAgoPipe } from '../pipes/time-ago.pipe';
 export class UserService {
 
  private apiUrl = environment.apiUrl + environment.apiVersion + 'users';
-
   private webSocketUrl = environment.apiUrl + environment.webSocketUrl;
   private stompClient: CompatClient = {} as CompatClient;
   private subscriptionActiveUsers: any;

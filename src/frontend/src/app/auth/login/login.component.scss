@@ -1,11 +1,17 @@
+/* 
+  .wrapper: lớp bao ngoài dùng để căn giữa form 
+  trên toàn bộ màn hình.
+*/
 .wrapper {
-  min-width: 100vw;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  min-width: 100vw; /* Chiếm toàn bộ chiều rộng viewport */
+  min-height: 100vh; /* Chiếm toàn bộ chiều cao viewport */
+  display: flex;     /* Dùng Flexbox để dễ căn giữa */
+  justify-content: center;  /* Căn giữa theo chiều ngang */
+  align-items: center;      /* Căn giữa theo chiều dọc */
 }
-
+/*
+  style dành cho thẻ <form>
+*/
 form {
   display: flex;
   flex-direction: column;
@@ -15,6 +21,6 @@ form {
 }
 
 h1 {
-  font-size: 2rem;
-  margin-bottom: 24px;
+  font-size: 2rem;  /* Tăng kích thước font */
+  margin-bottom: 24px;  /* Tạo khoảng cách dưới tiêu đề */
 }
