@@ -8,7 +8,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
   providedIn: 'root'
 })
 export class MessageRoomService {
-
+    // API dùng để thao tác với MessageRoom
   private apiUrl = environment.apiUrl + environment.apiVersion + 'messagerooms';
 
 
@@ -17,18 +17,28 @@ export class MessageRoomService {
     private http: HttpClient,
   ) { }
 
-
+  /*
+   * Tìm phòng chat giữa các thành viên
+   * - Dùng khi muốn kiểm tra xem đã có phòng chat 1-1 hoặc nhóm chưa
+   * - truyền danh sách username vào
+   * - Backend sẽ tìm phòng mà tất cả user đó đều là thành viên
+   */
 
   findMessageRoomByMembers(members: string[]): Observable<MessageRoom> {
     const url = this.apiUrl + '/find-chat-room';
     const params = {
-      members: members
+      members: members    // dạng array backend nhận dạng list
     };
     return this.http.get<MessageRoom>(url, { params });
   }
 
 
-
+  /**
+   * Tạo phòng chat mới
+   *  currentUsername: người đang tạo phòng
+   *  members: danh sách người được thêm vào
+   *  members được join thành chuỗi
+   */
   createChatRoom(currentUsername: string, members: string[]): Observable<MessageRoom> {
     const url = this.apiUrl + '/create-chat-room';
     const params = new HttpParams()
@@ -38,7 +48,10 @@ export class MessageRoomService {
   }
 
 
-
+  /*
+   * Lấy danh sách phòng chat của user mà có ít nhất 1 tin nhắn
+   * → dùng để hiển thị danh sách phòng chat ở sidebar
+   */
   
   findMessageRoomAtLeastOneContent(username: string): Observable<MessageRoom[]> {
     const url = this.apiUrl + '/find-chat-room-at-least-one-content/' + username;
@@ -47,7 +60,7 @@ export class MessageRoomService {
 
 
 
-  
+  //Lấy thông tin chi tiết của 1 phòng chat theo roomId
   findById(roomId?: string): Observable<MessageRoom> {
     const url = this.apiUrl + '/' + roomId;
     return this.http.get<MessageRoom>(url);
