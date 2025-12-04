@@ -23,6 +23,8 @@ export class MessagesComponent implements OnInit, OnDestroy{
   selectedMessageRoom: MessageRoom = {};
   messageToSend: MessageContent = {};
   messageRooms: MessageRoom[] = [];
+  selectedImage: File | null = null;
+  imagePreview: string | null = null;
 
  // Thêm thuộc tính để hiển thị thông báo spam cụ thể
   isSpamBlocked: boolean = true;
@@ -45,6 +47,15 @@ export class MessagesComponent implements OnInit, OnDestroy{
 
   ngOnInit() {
     this.currentUser = this.userService.getFromLocalStorage();
+    
+    // Subscribe to theme changes để cập nhật UI
+    this.themeService.themeMode$.subscribe(mode => {
+      this.themeMode = mode === 'dark';
+    });
+    
+    this.themeService.themeColor$.subscribe(color => {
+      this.themeColor = this.themeService.getGetThemeColorObject(color);
+    });
 
     this.userService.connect(this.currentUser);
     this.messageContentService.connect(this.currentUser);
@@ -143,6 +154,12 @@ export class MessagesComponent implements OnInit, OnDestroy{
   subscribeMessages() {
     this.messageContentService.subscribeMessagesObservable().subscribe({
       next: (messageContent: MessageContent) => {
+        console.log('=== MESSAGE RECEIVED ===');
+        console.log('Content:', messageContent.content);
+        console.log('MessageType:', messageContent.messageType);
+        console.log('Sender:', messageContent.sender);
+        console.log('========================');
+        
         if(messageContent.messageRoomId === this.selectedMessageRoom.id) {
           this.selectedMessageRoom.lastMessage = messageContent;
           this.selectedMessageRoom.messages?.push(messageContent);
@@ -177,6 +194,12 @@ export class MessagesComponent implements OnInit, OnDestroy{
 
 
  sendMessage() {
+    // Nếu có ảnh được chọn, gửi ảnh
+    if (this.selectedImage) {
+      this.sendImageMessage();
+      return;
+    }
+
     // Kiểm tra nội dung tin nhắn có rỗng không
     if (!this.messageToSend.content || this.messageToSend.content.trim() === '') {
       return;
@@ -196,6 +219,61 @@ export class MessagesComponent implements OnInit, OnDestroy{
     this.messageToSend = {};
     this.isSpamBlocked = false;
     this.spamErrorMessage = '';
+  }
+
+  onImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.selectedImage = file;
+      
+      // Tạo preview
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagePreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeSelectedImage() {
+    this.selectedImage = null;
+    this.imagePreview = null;
+  }
+
+  sendImageMessage() {
+    if (!this.selectedImage) return;
+
+    console.log('Uploading image:', this.selectedImage.name);
+
+    // Upload ảnh lên server
+    this.messageContentService.uploadImage(this.selectedImage).subscribe({
+      next: (imageUrl: string) => {
+        console.log('Image uploaded successfully. URL:', imageUrl);
+        
+        // Trim URL để loại bỏ khoảng trắng
+        const cleanUrl = imageUrl.trim();
+        
+        // Gửi tin nhắn với URL ảnh
+        const messageToSend: MessageContent = {
+          content: cleanUrl,
+          messageRoomId: this.selectedMessageRoom.id,
+          sender: this.currentUser.username,
+          messageType: MessageType.IMAGE
+        };
+
+        console.log('Sending image message:', messageToSend);
+        this.messageContentService.sendMessage(messageToSend);
+        
+        // Reset
+        this.selectedImage = null;
+        this.imagePreview = null;
+        this.messageToSend = {};
+      },
+      error: (error) => {
+        console.error('Failed to upload image:', error);
+        alert('Không thể tải ảnh lên. Vui lòng thử lại.');
+      }
+    });
   }
 
   // Thêm phương thức clearSpamError để xóa thông báo lỗi spam
@@ -255,6 +333,14 @@ export class MessagesComponent implements OnInit, OnDestroy{
 
   switchColor(color: string) {
     this.themeService.switchColor(color);
+  }
+
+  onThemeColorChange(selectedColor: any) {
+    console.log('Theme color changed:', selectedColor);
+    if (selectedColor && selectedColor.name) {
+      this.themeColor = selectedColor;
+      this.switchColor(selectedColor.name);
+    }
   }
 
 
@@ -332,7 +418,7 @@ export class MessagesComponent implements OnInit, OnDestroy{
 
     const countAdmin = this.selectedMessageRoom.members?.filter(m => m.isAdmin).length ?? 0;
     if(countAdmin <= 1) {
-      alert('You cannot leave the group because you are the only admin');
+      alert('Bạn không thể rời nhóm vì hiện tại bạn là trưởng nhóm duy nhất của nhóm');
       return;
     }
 

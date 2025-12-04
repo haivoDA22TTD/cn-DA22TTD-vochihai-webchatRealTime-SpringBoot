@@ -7,6 +7,14 @@
   <div class="chat-message-content"
     [title]="messageContent?.dateSent | date : 'HH:mm:ss dd/MM/yyyy'">
     <div class="chat-message-username">{{messageContent?.sender}}</div>
-    <div class="chat-message-text">{{messageContent?.content}}</div>
+    <div class="chat-message-text" *ngIf="messageContent?.messageType === 'TEXT'">
+      {{messageContent?.content}}
+    </div>
+    <div class="chat-message-image" *ngIf="messageContent?.messageType === 'IMAGE'">
+      <img [src]="messageContent?.content" 
+           alt="Image" 
+           (error)="onImageError($event)"
+           style="max-width: 300px; max-height: 300px; border-radius: 8px; cursor: pointer;" />
+    </div>
   </div>
 </div>

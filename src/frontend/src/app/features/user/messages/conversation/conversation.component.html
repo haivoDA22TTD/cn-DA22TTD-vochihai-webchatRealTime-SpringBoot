@@ -22,7 +22,12 @@
     <div class="conversation-username">{{room | messageRoomName}}</div>
     <div class="conversation-content">
       <span>
-        {{room.lastMessage?.content}}
+        <ng-container *ngIf="room.lastMessage?.messageType === 'IMAGE'">
+          📷 Đã gửi một ảnh
+        </ng-container>
+        <ng-container *ngIf="room.lastMessage?.messageType !== 'IMAGE'">
+          {{room.lastMessage?.content}}
+        </ng-container>
       </span>
       <span class="conversation-date">
         <span *ngIf="room.lastMessage?.id">•</span>

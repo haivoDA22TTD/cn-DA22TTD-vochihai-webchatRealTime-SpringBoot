@@ -41,7 +41,7 @@ export class MessageContentService {
       }
     );
   }
-  //Khi kết nối thành công → đăng ký nhận tin nhắn + lỗi
+  //Khi kết nối thành công  đăng ký nhận tin nhắn + lỗi
   private onConnect(user: User) {
     this.subscribeMessages(user);
     this.subscribeErrors(user); // Thêm subscription để nhận thông báo lỗi
@@ -79,6 +79,14 @@ export class MessageContentService {
       // Bắn lỗi để UI show thông báo
       this.errorSubject.next('Không thể gửi tin nhắn. Vui lòng kiểm tra kết nối.');
     }
+  }
+  
+  //Upload ảnh lên server
+  uploadImage(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const url = `${this.apiUrl}/upload-image`;
+    return this.http.post(url, formData, { responseType: 'text' });
   }
   //Ngắt kết nối WebSocket + hủy subscriptions
   disconnect() {

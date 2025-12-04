@@ -25,6 +25,6 @@ public class RedisRateLimiterService {
         }
 
         // Nếu số tin nhắn vượt quá 5 tin nhắn trong 60 giây thì không cho gửi
-        return count <= 10;
+        return count <= 20;
     }
 }

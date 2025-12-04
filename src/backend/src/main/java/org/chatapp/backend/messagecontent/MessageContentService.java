@@ -57,7 +57,7 @@ public class MessageContentService {
         return messageContentRepository.countUnseenMessage(roomId, username);
     }
     // ===========================================================================
-    // BONUS: Gọi khi user đã đọc hết tin nhắn trong phòng
+    //  Gọi khi user đã đọc hết tin nhắn trong phòng
     // ===========================================================================
     @CacheEvict(value = "unseenCount", allEntries = true)
     public void markAsSeen(UUID roomId, String username) {
@@ -66,11 +66,11 @@ public class MessageContentService {
     }
 
     // ===========================================================================
-    // BONUS: Xóa cache thủ công khi cần (gọi từ nơi khác nếu cần)
+    //  Xóa cache thủ công khi cần (gọi từ nơi khác nếu cần)
     // ===========================================================================
     @CacheEvict(value = {"lastMessage", "roomMessages"}, key = "#roomId")
     public void evictMessageCaches(UUID roomId) {
-        // Dùng khi xóa phòng, xóa tin nhắn, v.v.
+        // Dùng khi xóa phòng, xóa tin nhắn.
     }
 
 }

@@ -15,5 +15,6 @@ export interface MessageContent {
 }
   // Các loại tin nhắn có thể có
 export enum MessageType {
-  TEXT = 'TEXT'
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE'
 }

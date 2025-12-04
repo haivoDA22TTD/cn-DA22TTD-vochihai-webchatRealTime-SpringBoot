@@ -25,7 +25,7 @@
           </app-avatar>
         </div>
         <div class="header-username">{{currentUser.username}}</div>
-        <!-- new messages -->
+        
         <span (click)="isShowDialogChat = true" class="material-symbols-rounded">add_circle</span>
       </div>
       <div class="header-title">
@@ -76,15 +76,29 @@
           <span class="material-symbols-rounded">arrow_upward</span>
         </div>
         
+        <!-- Image preview -->
+        <div *ngIf="imagePreview" class="image-preview-container" style="padding: 10px; background: var(--surface-ground); border-top: 1px solid var(--surface-border);">
+          <div style="position: relative; display: inline-block;">
+            <img [src]="imagePreview" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;" />
+            <button (click)="removeSelectedImage()" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
+          </div>
+        </div>
+
         <form class="chat-footer">
           <div class="other-list">
             <div class="emoji">
               <span class="material-symbols-rounded">mood</span>
             </div>
+            <div class="image-upload">
+              <input type="file" id="image-input" accept="image/*" (change)="onImageSelected($event)" style="display: none;" />
+              <label for="image-input" style="cursor: pointer; display: flex; align-items: center;">
+                <span class="material-symbols-rounded">image</span>
+              </label>
+            </div>
           </div>
           <input [(ngModel)]="messageToSend.content" 
             (keydown.enter)="sendMessage()"
-            type="text" class="p-inputtext" id="message-input" placeholder="Type something here..." name="content" autofocus [disabled]="isSpamBlocked"
+            type="text" class="p-inputtext" id="message-input" placeholder="Soạn tin nhắn" name="content" autofocus [disabled]="isSpamBlocked"
             style="background-color: transparent;"/>
           <span (click)="sendMessage()" class="send-button material-symbols-rounded" [class.disabled]="isSpamBlocked">Send</span>
         </form>
@@ -121,7 +135,12 @@
             </div>
             <div class="theme-color">
               <p>Màu chủ đề</p>
-              <p-dropdown [(ngModel)]="themeColor" (onChange)="switchColor(themeColor.name)" [options]="themeColors">
+              <p-dropdown 
+                [ngModel]="themeColor" 
+                (ngModelChange)="onThemeColorChange($event)" 
+                [options]="themeColors" 
+                optionLabel="name"
+                [style]="{'width': '100%'}">
                 <ng-template pTemplate="selectedItem">
                   <div class="theme-button" [style.backgroundColor]="themeColor?.color"></div>
                 </ng-template>

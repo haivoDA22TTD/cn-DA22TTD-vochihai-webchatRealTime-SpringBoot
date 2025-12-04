@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,13 @@ export class ThemeService {
 
   private _themeMode: string = 'light';
   private _themeColor: string = 'pink';
+  
+  // BehaviorSubject để notify components khi theme thay đổi
+  private themeModeSubject = new BehaviorSubject<string>(this._themeMode);
+  private themeColorSubject = new BehaviorSubject<string>(this._themeColor);
+  
+  public themeMode$ = this.themeModeSubject.asObservable();
+  public themeColor$ = this.themeColorSubject.asObservable();
 
   get themeMode(): string {
     return this._themeMode
@@ -63,12 +71,14 @@ export class ThemeService {
   }
 
   get currentTheme(): string {
-    return `aura-${this.themeMode}-${this.themeColor}.css`;
+    return `themes/aura-${this.themeMode}-${this.themeColor}.css`;
   }
 
   constructor() {
     this._themeMode = localStorage.getItem('theme.mode') ?? 'light';
     this._themeColor = localStorage.getItem('theme.color') ?? 'blue';
+    this.themeModeSubject.next(this._themeMode);
+    this.themeColorSubject.next(this._themeColor);
     this.applyTheme();
   }
 
@@ -83,6 +93,7 @@ export class ThemeService {
   switchMode(mode: string) {
     this._themeMode = mode;
     localStorage.setItem('theme.mode', mode);
+    this.themeModeSubject.next(mode); // Notify subscribers
     this.applyTheme();
   }
 
@@ -91,6 +102,7 @@ export class ThemeService {
   switchColor(color: string) {
     this._themeColor = color;
     localStorage.setItem('theme.color', color);
+    this.themeColorSubject.next(color); // Notify subscribers
     this.applyTheme();
   }
 

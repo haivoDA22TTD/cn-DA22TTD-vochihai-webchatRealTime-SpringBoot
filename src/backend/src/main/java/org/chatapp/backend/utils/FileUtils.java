@@ -21,6 +21,7 @@ public class FileUtils {
 
     public final static String FOLDER_UPLOAD = "uploads";
     public final static String FOLDER_AVATAR = "avatars";
+    public final static String FOLDER_MESSAGES = "messages";
 
 
     public static String storeFile(final MultipartFile file, final String folderName) {
@@ -65,7 +66,13 @@ public class FileUtils {
 
 
     public static String getAvatarUrl(final String fileName) {
-        return BACKEND_URL + "/images/" + FOLDER_AVATAR + "/" + fileName;
+        String baseUrl = (BACKEND_URL != null && !BACKEND_URL.isEmpty()) ? BACKEND_URL : "http://localhost:8080";
+        return baseUrl + "/images/" + FOLDER_AVATAR + "/" + fileName;
+    }
+
+    public static String getMessageImageUrl(final String fileName) {
+        String baseUrl = (BACKEND_URL != null && !BACKEND_URL.isEmpty()) ? BACKEND_URL : "http://localhost:8080";
+        return baseUrl + "/images/" + FOLDER_MESSAGES + "/" + fileName;
     }
 
 }
