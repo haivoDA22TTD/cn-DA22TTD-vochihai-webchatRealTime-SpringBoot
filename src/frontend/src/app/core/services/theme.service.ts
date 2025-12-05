@@ -70,10 +70,6 @@ export class ThemeService {
     return this._themeColors;
   }
 
-  get currentTheme(): string {
-    return `themes/aura-${this.themeMode}-${this.themeColor}.css`;
-  }
-
   constructor() {
     this._themeMode = localStorage.getItem('theme.mode') ?? 'light';
     this._themeColor = localStorage.getItem('theme.color') ?? 'blue';
@@ -93,25 +89,25 @@ export class ThemeService {
   switchMode(mode: string) {
     this._themeMode = mode;
     localStorage.setItem('theme.mode', mode);
-    this.themeModeSubject.next(mode); // Notify subscribers
-    this.applyTheme();
+    this.themeModeSubject.next(mode);
+    // Mode chỉ ảnh hưởng đến app theme, không cần applyTheme
   }
-
-
 
   switchColor(color: string) {
     this._themeColor = color;
     localStorage.setItem('theme.color', color);
-    this.themeColorSubject.next(color); // Notify subscribers
+    this.themeColorSubject.next(color);
     this.applyTheme();
   }
 
 
 
   applyTheme() {
-    const themeLink = document.getElementById('app-theme') as HTMLLinkElement;
-    if(themeLink) {
-      themeLink.href = this.currentTheme;
+    // Chỉ đổi màu CSS variable cho ô tin nhắn, không đổi toàn bộ theme
+    const colorObj = this.getGetThemeColorObject(this._themeColor);
+    if (colorObj) {
+      document.documentElement.style.setProperty('--message-bubble-color', colorObj.color);
+      console.log('Message bubble color changed to:', colorObj.color);
     }
   }
 

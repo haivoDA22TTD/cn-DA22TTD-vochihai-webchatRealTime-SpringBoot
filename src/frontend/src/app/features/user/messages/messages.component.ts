@@ -30,7 +30,7 @@ export class MessagesComponent implements OnInit, OnDestroy{
   isSpamBlocked: boolean = true;
   spamErrorMessage: string = 'Bạn đang gửi tin nhắn quá nhanh. Vui lòng chờ một chút trước khi gửi tin nhắn tiếp theo.';
 
-  themeMode: boolean = this.themeService.themeMode === 'dark' ? true : false;
+  themeMode: boolean = false;
   themeColor = this.themeService.getGetThemeColorObject(this.themeService.themeColor);
   themeColors = this.themeService.themeColors;
 
@@ -49,6 +49,8 @@ export class MessagesComponent implements OnInit, OnDestroy{
     this.currentUser = this.userService.getFromLocalStorage();
     
     // Subscribe to theme changes để cập nhật UI
+    this.themeMode = this.themeService.themeMode === 'dark';
+    
     this.themeService.themeMode$.subscribe(mode => {
       this.themeMode = mode === 'dark';
     });
