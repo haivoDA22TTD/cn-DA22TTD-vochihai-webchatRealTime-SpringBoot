@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -71,11 +71,12 @@ export class ThemeService {
   }
 
   constructor() {
-    this._themeMode = localStorage.getItem('theme.mode') ?? 'light';
+    this._themeMode = localStorage.getItem('theme.mode') ?? 'dark';
     this._themeColor = localStorage.getItem('theme.color') ?? 'blue';
     this.themeModeSubject.next(this._themeMode);
     this.themeColorSubject.next(this._themeColor);
-    this.applyTheme();
+    this.applyPrimeNGTheme(); // Load theme từ localStorage
+    this.applyTheme(); // Apply màu ô tin nhắn
   }
 
   
@@ -90,7 +91,7 @@ export class ThemeService {
     this._themeMode = mode;
     localStorage.setItem('theme.mode', mode);
     this.themeModeSubject.next(mode);
-    // Mode chỉ ảnh hưởng đến app theme, không cần applyTheme
+    this.applyPrimeNGTheme();
   }
 
   switchColor(color: string) {
@@ -108,6 +109,17 @@ export class ThemeService {
     if (colorObj) {
       document.documentElement.style.setProperty('--message-bubble-color', colorObj.color);
       console.log('Message bubble color changed to:', colorObj.color);
+    }
+  }
+
+  applyPrimeNGTheme() {
+    // Đổi PrimeNG theme (lara-light-blue hoặc lara-dark-blue)
+    const themeLink = document.getElementById('app-theme') as HTMLLinkElement;
+    if (themeLink) {
+      const themeName = `lara-${this._themeMode}-blue`;
+      const newHref = `assets/themes/${themeName}/theme.css`;
+      themeLink.href = newHref;
+      console.log('PrimeNG theme changed to:', themeName);
     }
   }
 
