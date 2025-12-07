@@ -15,8 +15,8 @@
 ## 📌 Sơ đồ kiến trúc hệ thống
 <p align="center">
   <img 
-    src="https://raw.githubusercontent.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/main/progress-report/so-do-kien-truc-he-thong.png"
-    width="700"
+   [ src="https://raw.githubusercontent.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/main/progress-report/so-do-kien-truc-he-thong.png"
+    width="700"](https://github.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/blob/main/progress-report/so-do-kien-truc-he-thong.png)
   >
 </p>
 
