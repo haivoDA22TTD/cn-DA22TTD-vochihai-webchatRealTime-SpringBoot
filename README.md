@@ -23,7 +23,7 @@
 ## 📌 Poster đề tài
 <p align="center">
   <img 
-    src="https://raw.githubusercontent.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/main/progress-report/Web%20chat%20Real%20Time.png"
+    src="[https://raw.githubusercontent.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/main/progress-report/Web%20chat%20Real%20Time.png](https://github.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/blob/main/progress-report/Web%20chat%20Real%20Time.png)"
     width="700"
   >
 </p>
