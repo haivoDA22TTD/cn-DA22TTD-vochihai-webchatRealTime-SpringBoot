@@ -13,10 +13,10 @@
  Dự án **web Chat Realtime** là một hệ thống trò chuyện trực tuyến được xây dựng bằng **Angular**, **SCSS** cho giao diện hiện đại và **Spring Boot**, **MySQL** cho xử lý và lưu trữ dữ liệu phía server. Ứng dụng cho phép chat 1-1, chat nhóm, tạo nhóm mới, chuyển quyền trưởng nhóm, hỗ trợ dark mode giúp trải nghiệm thân thiện với người dùng. Người dùng có thể upload avatar cá nhân, xem danh sách người dùng online, các cuộc trò chuyện gần đây, đồng thời mỗi tin nhắn đều hiển thị thời gian gửi và trạng thái đã xem. Hệ thống mang đến trải nghiệm trò chuyện mượt mà, realtime và bảo mật, đáp ứng nhu cầu giao tiếp nhanh chóng, tiện lợi trong môi trường trực tuyến.
 
 ## 📌 Sơ đồ kiến trúc hệ thống
-![Sơ đồ kiến trúc hệ thống](https://raw.githubusercontent.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/main/progress-report/so-do-kien-truc-he-thong.png)
+![Sơ đồ kiến trúc hệ thống](progress-report/so-do-kien-truc-he-thong.png)
 
 ## 📌 Poster đề tài
-![Poster đề tài](https://raw.githubusercontent.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot/main/progress-report/Web%20chat%20Real%20Time.png)
+![Poster đề tài](progress-report/Web%20chat%20Real%20Time.png)
 
 
 ## Cơ sở dữ liệu
