@@ -33,14 +33,15 @@ public class FileUtils {
         final String newFileName = UUID.randomUUID() + getFileExtension(file);
         Path path = Paths.get(FOLDER_UPLOAD, folderName);
 
+        // Tạo thư mục nếu chưa tồn tại (mkdirs tạo cả parent folders)
         if (!path.toFile().exists()) {
-            path.toFile().mkdir();
+            path.toFile().mkdirs();
         }
 
         try {
             file.transferTo(path.resolve(newFileName));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to store file: " + e.getMessage(), e);
         }
 
         return newFileName;

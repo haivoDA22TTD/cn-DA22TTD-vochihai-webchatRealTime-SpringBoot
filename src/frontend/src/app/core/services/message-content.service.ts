@@ -31,18 +31,22 @@ export class MessageContentService {
   connect(user: User) {
     const socket = new SockJS(this.webSocketUrl);
     this.stompClient = Stomp.over(socket);
+    
+    // Tắt debug log của STOMP
+    this.stompClient.debug = () => {};
 
     this.stompClient.connect(
       {},   // header
       () => this.onConnect(user),   // kết nối thành công
       (error: any) => {             // kết nối thất bại
         console.error('WebSocket connection error:', error);
-        alert('Failed to connect to WebSocket. Please try again.');
+        this.errorSubject.next('Không thể kết nối đến server. Vui lòng thử lại.');
       }
     );
   }
   //Khi kết nối thành công  đăng ký nhận tin nhắn + lỗi
   private onConnect(user: User) {
+    console.log('WebSocket connected for user:', user.username);
     this.subscribeMessages(user);
     this.subscribeErrors(user); // Thêm subscription để nhận thông báo lỗi
   }
@@ -58,9 +62,11 @@ export class MessageContentService {
   }
   //Lắng nghe lỗi server gửi về WebSocket (nếu có)
   private subscribeErrors(user: User) {
+    console.log('Subscribing to errors for user:', user.username);
     this.subscriptionErrors = this.stompClient.subscribe(
       `/user/${user.username}/queue/errors`,
       (message: any) => {
+        console.log('Error message received from WebSocket:', message.body);
         const errorMessage = message.body;
         this.errorSubject.next(errorMessage);   // phát lỗi ra ngoài
       }

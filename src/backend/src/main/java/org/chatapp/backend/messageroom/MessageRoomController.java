@@ -44,4 +44,12 @@ public class MessageRoomController {
         return ResponseEntity.ok(messageRoomService.findById(roomId));
     }
 
+
+    @Operation(summary = "Đổi tên nhóm chat")
+    @PutMapping("/{roomId}/rename")
+    public ResponseEntity<MessageRoomDTO> renameRoom(@PathVariable final UUID roomId,
+                                                     @RequestParam final String newName) {
+        return ResponseEntity.ok(messageRoomService.renameRoom(roomId, newName));
+    }
+
 }

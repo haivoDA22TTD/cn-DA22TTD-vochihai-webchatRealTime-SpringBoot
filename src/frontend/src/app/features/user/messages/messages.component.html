@@ -87,13 +87,28 @@
         <form class="chat-footer">
           <div class="other-list">
             <div class="emoji">
-              <span class="material-symbols-rounded">mood</span>
+              <span class="material-symbols-rounded" (click)="emojiPanel.toggle($event)" pTooltip="Chọn emoji">mood</span>
+              <p-overlayPanel #emojiPanel [style]="{width: '320px'}">
+                <div class="emoji-picker">
+                  <span *ngFor="let emoji of emojis" 
+                        class="emoji-item" 
+                        (click)="addEmoji(emoji)">{{emoji}}</span>
+                </div>
+              </p-overlayPanel>
             </div>
             <div class="image-upload">
               <input type="file" id="image-input" accept="image/*" (change)="onImageSelected($event)" style="display: none;" />
-              <label for="image-input" style="cursor: pointer; display: flex; align-items: center;">
+              <label for="image-input" style="cursor: pointer; display: flex; align-items: center;" pTooltip="Gửi ảnh">
                 <span class="material-symbols-rounded">image</span>
               </label>
+            </div>
+            <div class="location-send">
+              <span class="material-symbols-rounded" 
+                    (click)="sendLocation()" 
+                    [class.loading]="isGettingLocation"
+                    pTooltip="Gửi vị trí">
+                {{isGettingLocation ? 'hourglass_empty' : 'location_on'}}
+              </span>
             </div>
           </div>
           <input [(ngModel)]="messageToSend.content" 
@@ -123,7 +138,10 @@
 
             <div class="detail-title">
               <div class="detail-group-name">{{selectedMessageRoom | messageRoomName}}</div>
-              <span class="pi pi-pen-to-square cursor-pointer"></span>
+              <span *ngIf="selectedMessageRoom.isGroup && selectedMessageRoom.isAdmin" 
+                    class="pi pi-pen-to-square cursor-pointer" 
+                    (click)="openRenameDialog()"
+                    pTooltip="Đổi tên nhóm"></span>
             </div>
             <span class="detail-subtitle">Tạo bởi {{selectedMessageRoom.createdById}}, {{selectedMessageRoom.createdDate | date : 'HH:mm:ss dd/MM/yyyy'}}</span>
           </div>
@@ -156,11 +174,24 @@
               <div class="detail-member-title">Thành viên</div>
               <span *ngIf="selectedMessageRoom.isAdmin" (click)="isShowDialogAddMember = true" class="detail-member-add">Thêm thành viên</span>
             </div>
+            <!-- Hiển thị avatar các thành viên dạng grid -->
+            <div class="members-avatar-grid" *ngIf="selectedMessageRoom.isGroup">
+              <div class="member-avatar-item" *ngFor="let member of selectedMessageRoom.members" [pTooltip]="member.username">
+                <app-avatar
+                  [username]="member.username"
+                  [avatarUrl]="member.avatarUrl"
+                  [width]="'40px'">
+                </app-avatar>
+                <span class="member-admin-badge" *ngIf="member.isAdmin">👑</span>
+              </div>
+            </div>
+
             <div class="detail-members-list" *ngIf="selectedMessageRoom.isGroup">
               <div class="detail-member"
                 *ngFor="let member of selectedMessageRoom.members">
                 <app-avatar
                   [username]="member.username"
+                  [avatarUrl]="member.avatarUrl"
                   [width]="'44px'">
                 </app-avatar>
                 <div class="detail-member-detail">
@@ -220,4 +251,26 @@
   <button *ngIf="selectedMember?.isAdmin" (click)="removeAdmin()">Xóa quyền admin</button>
   <button (click)="removeFromGroup()">Xóa thành viên khỏi nhóm</button>
   <button (click)="isShowEditMember = false">Hủy</button>
+</p-dialog>
+
+
+<!-- Dialog đổi tên nhóm -->
+<p-dialog
+  [(visible)]="isShowRenameDialog"
+  header="Đổi tên nhóm"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '400px', maxWidth: '90%'}">
+  <div class="rename-dialog-content">
+    <input type="text" 
+           class="p-inputtext" 
+           [(ngModel)]="newGroupName" 
+           placeholder="Nhập tên nhóm mới"
+           (keydown.enter)="renameGroup()"
+           style="width: 100%; margin-bottom: 1rem;" />
+    <div class="rename-dialog-actions">
+      <button pButton label="Hủy" class="p-button-text" (click)="isShowRenameDialog = false"></button>
+      <button pButton label="Lưu" (click)="renameGroup()" [disabled]="!newGroupName.trim()"></button>
+    </div>
+  </div>
 </p-dialog>

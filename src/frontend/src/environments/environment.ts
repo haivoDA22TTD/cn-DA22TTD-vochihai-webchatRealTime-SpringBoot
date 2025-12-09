@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://my-deploy-url/',
-  apiVersion: 'api/v14/',
-  webSocketUrl: 'api/ws'
+  apiUrl: '',  // Empty string để nginx proxy xử lý
+  apiVersion: '/api/v1/',
+  webSocketUrl: '/api/ws'
 }

@@ -16,5 +16,27 @@
            (error)="onImageError($event)"
            style="max-width: 300px; max-height: 300px; border-radius: 8px; cursor: pointer;" />
     </div>
+    <div class="chat-message-location" *ngIf="messageContent?.messageType === 'LOCATION'">
+      <div class="location-preview" (click)="openLocationInMaps()">
+        <div class="location-icon">📍</div>
+        <div class="location-info">
+          <span class="location-label">Vị trí đã chia sẻ</span>
+          <span class="location-coords">{{getLocationCoords()}}</span>
+        </div>
+        <div class="location-action">
+          <span class="material-symbols-rounded">open_in_new</span>
+        </div>
+      </div>
+      <iframe 
+        *ngIf="getMapUrl()"
+        [src]="getMapUrl()"
+        width="280"
+        height="150"
+        style="border:0; border-radius: 8px; margin-top: 8px;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
   </div>
 </div>

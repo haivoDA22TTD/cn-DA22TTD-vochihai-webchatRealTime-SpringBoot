@@ -19,8 +19,11 @@ WORKDIR /app
 # Copy JAR từ stage trước
 COPY --from=builder /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
 
+# Tạo thư mục uploads cho avatar và messages
+RUN mkdir -p /app/uploads/avatars /app/uploads/messages
 
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN addgroup -S spring && adduser -S spring -G spring && \
+    chown -R spring:spring /app/uploads
 USER spring:spring
 
 # Chạy ứng dụng

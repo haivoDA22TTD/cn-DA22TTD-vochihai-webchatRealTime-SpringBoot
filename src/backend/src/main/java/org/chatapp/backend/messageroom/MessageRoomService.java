@@ -7,6 +7,7 @@ import org.chatapp.backend.messageroommember.MessageRoomMemberDTO;
 import org.chatapp.backend.messageroommember.MessageRoomMemberService;
 import org.chatapp.backend.user.User;
 import org.chatapp.backend.user.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -113,6 +114,23 @@ public class MessageRoomService {
                     return roomDTO;
                 })
                 .orElse(null);
+    }
+
+
+    @CachePut(value = "rooms", key = "#roomId")
+    @CacheEvict(value = "userRoomList", allEntries = true)
+    @Transactional
+    public MessageRoomDTO renameRoom(final UUID roomId, final String newName) {
+        return messageRoomRepository.findById(roomId)
+                .map(room -> {
+                    room.setName(newName);
+                    final MessageRoom saved = messageRoomRepository.save(room);
+                    final MessageRoomDTO roomDTO = messageRoomMapper.toDTO(saved, new MessageRoomDTO());
+                    final List<MessageRoomMemberDTO> roomMembers = messageRoomMemberService.findByMessageRoomId(roomDTO.getId());
+                    roomDTO.setMembers(roomMembers != null ? roomMembers : new ArrayList<>());
+                    return roomDTO;
+                })
+                .orElseThrow(() -> new RuntimeException("Room not found"));
     }
 
 }

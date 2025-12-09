@@ -22,6 +22,7 @@ public class MessageRoomMemberMapper {
         messageRoomMemberDTO.setIsAdmin(messageRoomMember.getIsAdmin());
         messageRoomMemberDTO.setLastSeen(messageRoomMember.getLastSeen());
         messageRoomMemberDTO.setLastLogin(messageRoomMember.getUser().getLastLogin());
+        messageRoomMemberDTO.setAvatarUrl(messageRoomMember.getUser().getAvatarUrl());
         return messageRoomMemberDTO;
     }
 

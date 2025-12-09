@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  # 1. MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-chat
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: chatapp
+      MYSQL_USER: chatuser
+      MYSQL_PASSWORD: chatpass123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # 2. Redis
+  redis:
+    image: redis:7-alpine
+    container_name: redis-chat
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  # 3. RedisInsight v2 – Web UI cho Redis
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    container_name: redis-insight
+    restart: unless-stopped
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight-data:/db
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # 4. Backend Spring Boot
+  backend:
+    build: ./backend
+    container_name: springboot-chat
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/chatapp?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: chatuser
+      SPRING_DATASOURCE_PASSWORD: chatpass123
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      BACKEND_URL: http://localhost
+    volumes:
+      - backend-uploads:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # 5. Frontend Angular
+  frontend:
+    build: ./frontend
+    container_name: angular-chat
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:
+  redis-data:
+  redisinsight-data:
+  backend-uploads:  # Lưu trữ avatar và message images

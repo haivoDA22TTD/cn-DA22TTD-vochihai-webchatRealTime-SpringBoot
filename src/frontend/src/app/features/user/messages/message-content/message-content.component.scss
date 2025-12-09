@@ -64,6 +64,69 @@ app-avatar {
   margin: 0.5rem 0;
 }
 
+// CSS cho tin nhắn vị trí
+.chat-message-location {
+  .location-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: var(--surface-100);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-width: 250px;
+
+    &:hover {
+      background-color: var(--surface-200);
+    }
+  }
+
+  .location-icon {
+    font-size: 1.5rem;
+  }
+
+  .location-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .location-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .location-coords {
+    font-size: 0.75rem;
+    color: var(--msg-date);
+  }
+
+  .location-action {
+    color: var(--primary-color);
+  }
+}
+
+.owner .chat-message-location {
+  .location-preview {
+    background-color: var(--message-bubble-color, var(--primary-color));
+    color: white;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  .location-coords {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .location-action {
+    color: white;
+  }
+}
+
 
 @keyframes fade-up {
   from {

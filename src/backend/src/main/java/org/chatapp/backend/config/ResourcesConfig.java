@@ -8,7 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class ResourcesConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Serve static files từ thư mục uploads (Docker volume)
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations("file:/app/uploads/", "file:uploads/");
     }
 }

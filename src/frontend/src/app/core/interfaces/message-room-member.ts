@@ -10,4 +10,6 @@ export interface MessageRoomMember {
   lastSeen?: string;
  // Thời điểm thành viên đăng nhập gần nhất (ISO string)
   lastLogin?: string;
+// Đường dẫn ảnh đại diện của thành viên
+  avatarUrl?: string;
 }

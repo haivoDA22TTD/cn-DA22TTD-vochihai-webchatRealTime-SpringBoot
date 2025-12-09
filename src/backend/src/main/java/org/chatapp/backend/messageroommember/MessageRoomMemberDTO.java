@@ -14,4 +14,5 @@ public class MessageRoomMemberDTO implements Serializable {
     private Boolean isAdmin;
     private LocalDateTime lastSeen;
     private LocalDateTime lastLogin;
+    private String avatarUrl;
 }

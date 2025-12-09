@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageContent, MessageType } from 'src/app/core/interfaces/message-content';
 import { MessageRoom } from 'src/app/core/interfaces/message-room';
@@ -9,6 +9,7 @@ import { MessageRoomMemberService } from 'src/app/core/services/message-room-mem
 import { MessageRoomService } from 'src/app/core/services/message-room.service';
 import { ThemeService } from 'src/app/core/services/theme.service';
 import { UserService } from 'src/app/core/services/user.service';
+import { OverlayPanel } from 'primeng/overlaypanel';
 
 @Component({
   selector: 'app-messages',
@@ -27,12 +28,38 @@ export class MessagesComponent implements OnInit, OnDestroy{
   imagePreview: string | null = null;
 
  // Thêm thuộc tính để hiển thị thông báo spam cụ thể
-  isSpamBlocked: boolean = true;
-  spamErrorMessage: string = 'Bạn đang gửi tin nhắn quá nhanh. Vui lòng chờ một chút trước khi gửi tin nhắn tiếp theo.';
+  isSpamBlocked: boolean = false;
+  spamErrorMessage: string = '';
 
   themeMode: boolean = false;
   themeColor = this.themeService.getGetThemeColorObject(this.themeService.themeColor);
   themeColors = this.themeService.themeColors;
+
+  // Emoji picker
+  @ViewChild('emojiPanel') emojiPanel!: OverlayPanel;
+  emojis: string[] = [
+    '😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃',
+    '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙',
+    '🥲', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫',
+    '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬',
+    '😮‍💨', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕',
+    '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '🤯', '🤠', '🥳',
+    '🥸', '😎', '🤓', '🧐', '😕', '😟', '🙁', '☹️', '😮', '😯',
+    '😲', '😳', '🥺', '😦', '😧', '😨', '😰', '😥', '😢', '😭',
+    '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤', '😡',
+    '😠', '🤬', '😈', '👿', '💀', '☠️', '💩', '🤡', '👹', '👺',
+    '👍', '👎', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '✌️', '🤞',
+    '🤟', '🤘', '🤙', '👈', '👉', '👆', '👇', '☝️', '✋', '🤚',
+    '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔',
+    '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '♥️'
+  ];
+
+  // Rename group
+  isShowRenameDialog: boolean = false;
+  newGroupName: string = '';
+
+  // Location
+  isGettingLocation: boolean = false;
 
 
   constructor(
@@ -61,14 +88,37 @@ export class MessagesComponent implements OnInit, OnDestroy{
 
     this.userService.connect(this.currentUser);
     this.messageContentService.connect(this.currentUser);
-    // Thêm subscription để nhận thông báo lỗi
-    //this.subscribeToErrorMessages();
+    
     window.addEventListener('beforeunload', () => {
       this.userService.disconnect(this.currentUser);
     });
 
     this.findMessageRoomAtLeastOneContent();
     this.subscribeMessages();
+    this.subscribeToErrorMessages();
+  }
+
+
+  // Subscribe để nhận thông báo lỗi từ WebSocket (rate limit, etc.)
+  subscribeToErrorMessages() {
+    this.messageContentService.subscribeErrorsObservable().subscribe({
+      next: (errorMessage: string) => {
+        console.log('=== ERROR RECEIVED ===');
+        console.log('Error:', errorMessage);
+        console.log('======================');
+        
+        this.isSpamBlocked = true;
+        this.spamErrorMessage = errorMessage;
+        
+        // Tự động ẩn thông báo sau 5 giây
+        setTimeout(() => {
+          this.clearSpamError();
+        }, 5000);
+      },
+      error: (error: any) => {
+        console.error('Error subscribing to errors:', error);
+      }
+    });
   }
 
 
@@ -433,6 +483,96 @@ export class MessagesComponent implements OnInit, OnDestroy{
         console.log(error);
       }
     });
+  }
+
+
+  // Thêm emoji vào tin nhắn
+  addEmoji(emoji: string) {
+    if (!this.messageToSend.content) {
+      this.messageToSend.content = '';
+    }
+    this.messageToSend.content += emoji;
+    this.emojiPanel.hide();
+  }
+
+
+  // Đổi tên nhóm chat
+  openRenameDialog() {
+    this.newGroupName = this.selectedMessageRoom.name || '';
+    this.isShowRenameDialog = true;
+  }
+
+  renameGroup() {
+    if (!this.newGroupName.trim() || !this.selectedMessageRoom.id) {
+      return;
+    }
+
+    this.messageRoomService.renameRoom(this.selectedMessageRoom.id, this.newGroupName.trim()).subscribe({
+      next: (room: MessageRoom) => {
+        this.selectedMessageRoom.name = room.name;
+        // Cập nhật trong danh sách rooms
+        const roomIndex = this.messageRooms.findIndex(r => r.id === room.id);
+        if (roomIndex !== -1) {
+          this.messageRooms[roomIndex].name = room.name;
+        }
+        this.isShowRenameDialog = false;
+        this.newGroupName = '';
+      },
+      error: (error) => {
+        console.error('Failed to rename group:', error);
+        alert('Không thể đổi tên nhóm. Vui lòng thử lại.');
+      }
+    });
+  }
+
+
+  // Gửi vị trí GPS
+  sendLocation() {
+    if (!navigator.geolocation) {
+      alert('Trình duyệt của bạn không hỗ trợ định vị GPS');
+      return;
+    }
+
+    this.isGettingLocation = true;
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const locationContent = `${lat},${lng}`;
+
+        const messageToSend: MessageContent = {
+          content: locationContent,
+          messageRoomId: this.selectedMessageRoom.id,
+          sender: this.currentUser.username,
+          messageType: MessageType.LOCATION
+        };
+
+        this.messageContentService.sendMessage(messageToSend);
+        this.isGettingLocation = false;
+      },
+      (error) => {
+        this.isGettingLocation = false;
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert('Bạn đã từ chối quyền truy cập vị trí');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert('Không thể lấy thông tin vị trí');
+            break;
+          case error.TIMEOUT:
+            alert('Yêu cầu lấy vị trí đã hết thời gian');
+            break;
+          default:
+            alert('Có lỗi xảy ra khi lấy vị trí');
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   }
 
 }

@@ -66,4 +66,16 @@ export class MessageRoomService {
     return this.http.get<MessageRoom>(url);
   }
 
+
+  /**
+   * Đổi tên nhóm chat
+   * @param roomId ID của phòng chat
+   * @param newName Tên mới của phòng chat
+   */
+  renameRoom(roomId: string, newName: string): Observable<MessageRoom> {
+    const url = `${this.apiUrl}/${roomId}/rename`;
+    const params = new HttpParams().set('newName', newName);
+    return this.http.put<MessageRoom>(url, null, { params });
+  }
+
 }

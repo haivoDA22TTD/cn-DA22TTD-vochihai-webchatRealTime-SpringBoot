@@ -6,6 +6,8 @@ import { DialogModule } from 'primeng/dialog';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { DropdownModule } from 'primeng/dropdown';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 
@@ -19,6 +21,8 @@ import { DropdownModule } from 'primeng/dropdown';
     AutoCompleteModule,
     InputSwitchModule,
     DropdownModule,
+    OverlayPanelModule,
+    TooltipModule,
   ]
 })
 export class PrimengModule { }

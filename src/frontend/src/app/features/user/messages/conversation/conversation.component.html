@@ -6,16 +6,28 @@
     <ng-container *ngFor="let member of room.members">
       <app-avatar *ngIf="member.username !== currentUser.username"
         [username]="member.username"
+        [avatarUrl]="member.avatarUrl"
         [width]="'44px'">
       </app-avatar>
     </ng-container>
   </ng-container>
 
-  <div *ngIf="room.isGroup">
-    <app-avatar
-      [width]="'44px'"
-      [isOnline]="userService.getRoomStatus(room) === 'Online'">
-    </app-avatar>
+  <div *ngIf="room.isGroup" class="group-avatar-container">
+    <div class="group-avatar-stack">
+      <ng-container *ngFor="let member of room.members?.slice(0, 3); let i = index">
+        <div class="group-avatar-item" [style.z-index]="3 - i" [style.margin-left]="i > 0 ? '-12px' : '0'">
+          <app-avatar
+            [username]="member.username"
+            [avatarUrl]="member.avatarUrl"
+            [width]="'28px'">
+          </app-avatar>
+        </div>
+      </ng-container>
+      <div *ngIf="room.members && room.members.length > 3" class="group-avatar-more">
+        +{{room.members.length - 3}}
+      </div>
+    </div>
+    <span class="group-online-indicator" *ngIf="userService.getRoomStatus(room) === 'Online'"></span>
   </div>
   
   <div class="conversation-detail">
@@ -25,7 +37,10 @@
         <ng-container *ngIf="room.lastMessage?.messageType === 'IMAGE'">
           📷 Đã gửi một ảnh
         </ng-container>
-        <ng-container *ngIf="room.lastMessage?.messageType !== 'IMAGE'">
+        <ng-container *ngIf="room.lastMessage?.messageType === 'LOCATION'">
+          📍 Đã chia sẻ vị trí
+        </ng-container>
+        <ng-container *ngIf="room.lastMessage?.messageType === 'TEXT'">
           {{room.lastMessage?.content}}
         </ng-container>
       </span>
