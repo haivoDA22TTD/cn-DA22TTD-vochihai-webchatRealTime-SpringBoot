@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { User } from '../interfaces/user';
+import { LoginResponse, User } from '../interfaces/user';
 import { Observable, Subject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { CompatClient, Stomp } from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
-import { MessageRoomMember } from '../interfaces/message-room-member';
+
 import { MessageRoom } from '../interfaces/message-room';
 import { TimeAgoPipe } from '../pipes/time-ago.pipe';
 
@@ -38,16 +38,33 @@ export class UserService {
   ) { }
 
   //Gửi yêu cầu login đến API
-  login(user: User): Observable<User> {
-    return this.http.post(this.apiUrl, user);
+  login(user: User): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.apiUrl, user);
   }
 
-  //Lưu user vào localStorage (chỉ lưu username & avatar)
-  saveToLocalStorage(user: User) {
+  //Lưu user vào localStorage (chỉ lưu username, avatar & token)
+  saveToLocalStorage(response: LoginResponse | User) {
     localStorage.setItem('user', JSON.stringify({
-      username: user.username,
-      avatarUrl: user.avatarUrl
+      username: response.username,
+      avatarUrl: response.avatarUrl
     }));
+    // Chỉ lưu token nếu là LoginResponse và có token
+    if ('token' in response && response.token) {
+      localStorage.setItem('token', response.token);
+    }
+  }
+  
+  // Lấy token từ localStorage
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+  
+  // Tạo headers với token
+  getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
   }
 
   // Lấy user từ localStorage

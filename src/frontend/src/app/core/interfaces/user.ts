@@ -9,6 +9,19 @@ export interface User {
    // Đường dẫn ảnh đại diện của người dùng
   avatarUrl?: string
 }
+
+// Interface cho response đăng nhập
+export interface LoginResponse {
+  username?: string;
+  avatarUrl?: string;
+  status?: Status;
+  token?: string;
+  success: boolean;
+  message?: string;
+  remainingAttempts?: number;
+  lockTimeMinutes?: number;
+}
+
 // Enum mô tả các trạng thái của người dùng
 export enum Status {
   ONLINE = 'ONLINE',

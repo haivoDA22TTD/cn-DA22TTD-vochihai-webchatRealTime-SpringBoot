@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from 'src/app/core/interfaces/user';
+import { LoginResponse, User } from 'src/app/core/interfaces/user';
 import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
@@ -14,6 +14,10 @@ export class LoginComponent {
     username: '',
     password: ''
   }
+
+  // Hiển thị dialog lỗi
+  showErrorDialog: boolean = false;
+  errorMessage: string = '';
 
   constructor(
     private userService: UserService, // Service xử lý API người dùng
@@ -29,18 +33,31 @@ export class LoginComponent {
     this.user.password = this.user.password.trim();
     // Gọi API login từ UserService
     this.userService.login(this.user).subscribe({
-      // Nếu API trả về thành công
-      next: (response: User) => {
+      // Nếu API trả về
+      next: (response: LoginResponse) => {
         console.log(response);
-        // Lưu thông tin user/token vào localStorage
-        this.userService.saveToLocalStorage(response);
-        this.router.navigate(['/']);
+        if (response.success) {
+          // Đăng nhập thành công - lưu thông tin và chuyển trang
+          this.userService.saveToLocalStorage(response);
+          this.router.navigate(['/']);
+        } else {
+          // Đăng nhập thất bại - hiển thị dialog lỗi
+          this.errorMessage = response.message || 'Đăng nhập thất bại';
+          this.showErrorDialog = true;
+        }
       }, 
-      // Điều hướng về trang chủ
+      // Lỗi kết nối
       error: (error: any) => {
         console.log(error);
+        this.errorMessage = 'Không thể kết nối đến máy chủ. Vui lòng thử lại sau.';
+        this.showErrorDialog = true;
       }
     });
   }
 
+  // Đóng dialog lỗi
+  closeErrorDialog() {
+    this.showErrorDialog = false;
+    this.errorMessage = '';
+  }
 }

@@ -19,8 +19,14 @@ public class UserController {
 
     @Operation(summary = "Xác thực người dùng")
     @PostMapping
-    public ResponseEntity<UserDTO> login(@RequestBody final UserDTO userDTO) {
+    public ResponseEntity<LoginResponse> login(@RequestBody final UserDTO userDTO) {
         return ResponseEntity.ok(userService.login(userDTO));
+    }
+    
+    @Operation(summary = "Đăng ký người dùng mới")
+    @PostMapping("/register")
+    public ResponseEntity<LoginResponse> register(@RequestBody final UserDTO userDTO) {
+        return ResponseEntity.ok(userService.register(userDTO));
     }
 
     @Operation(summary = "Gửi tin nhắn đến người dùng đang kết nối")

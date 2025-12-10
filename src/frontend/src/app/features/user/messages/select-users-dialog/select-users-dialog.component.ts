@@ -12,8 +12,8 @@ export class SelectUsersDialogComponent {
 
   @Input() visible: boolean = false;
   @Input() currentUsername: string | undefined = '';
-  @Input() title: string | undefined = 'Chat';
-  @Input() btnAction: string | undefined = 'Chat';
+  @Input() title: string | undefined = 'Trò chuyện';
+  @Input() btnAction: string | undefined = 'Trò chuyện';
   @Input() excludeMembers: MessageRoomMember[] | undefined = [];
 
   @Output() onHideEvent = new EventEmitter();

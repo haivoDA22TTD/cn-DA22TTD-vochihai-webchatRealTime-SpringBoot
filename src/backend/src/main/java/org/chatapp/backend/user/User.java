@@ -28,6 +28,10 @@ public class User {
     private LocalDateTime lastLogin = LocalDateTime.now();
 
     private String avatarUrl;
+    
+    // Đánh dấu mật khẩu đã được mã hóa chưa
+    @Builder.Default
+    private Boolean passwordEncoded = false;
 
     @OneToMany(mappedBy = "createdBy")
     private List<MessageRoom> messageRooms;
