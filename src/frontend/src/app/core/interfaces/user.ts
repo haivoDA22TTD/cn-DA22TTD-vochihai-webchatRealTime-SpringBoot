@@ -21,8 +21,8 @@ export interface User {
   /** URL ảnh đại diện - Đường dẫn tuyệt đối từ server */
   avatarUrl?: string,
   
-  /** Thời điểm đăng nhập cuối - Dùng để hiển thị "Online 5 phút trước" */
-  lastLogin?: Date
+  /** Thời điểm đăng nhập cuối - ISO string format, dùng để hiển thị "Online 5 phút trước" */
+  lastLogin?: string
 }
 
 /**

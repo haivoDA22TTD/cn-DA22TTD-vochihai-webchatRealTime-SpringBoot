@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { MessageContent } from 'src/app/core/interfaces/message-content';
+import { FileInfo, LinkPreview, MessageContent } from 'src/app/core/interfaces/message-content';
 import { User } from 'src/app/core/interfaces/user';
 
 @Component({
@@ -41,6 +41,105 @@ export class MessageContentComponent {
     const [lat, lng] = this.messageContent.content.split(',');
     const url = `https://www.google.com/maps?q=${lat},${lng}`;
     window.open(url, '_blank');
+  }
+
+  // ============ FILE HANDLING ============
+  
+  /**
+   * Parse thông tin file từ content JSON
+   */
+  getFileInfo(): FileInfo | null {
+    if (!this.messageContent?.content) return null;
+    try {
+      return JSON.parse(this.messageContent.content);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Format kích thước file (bytes -> KB/MB)
+   */
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  /**
+   * Lấy icon cho file dựa vào extension
+   */
+  getFileIcon(extension: string): string {
+    const icons: { [key: string]: string } = {
+      '.pdf': '📄',
+      '.docx': '📝',
+      '.doc': '📝',
+      '.xlsx': '📊',
+      '.xls': '📊',
+      '.pptx': '📽️',
+      '.ppt': '📽️',
+      '.zip': '📦',
+      '.rar': '📦'
+    };
+    return icons[extension.toLowerCase()] || '📎';
+  }
+
+  /**
+   * Tải file về máy
+   */
+  downloadFile() {
+    const fileInfo = this.getFileInfo();
+    if (fileInfo) {
+      window.open(fileInfo.url, '_blank');
+    }
+  }
+
+  // ============ LINK HANDLING ============
+
+  /**
+   * Lấy URL từ content (có thể là URL trực tiếp hoặc JSON)
+   */
+  getLinkUrl(): string {
+    if (!this.messageContent?.content) return '';
+    
+    // Thử parse JSON trước (cho tin nhắn cũ có preview)
+    try {
+      const parsed = JSON.parse(this.messageContent.content);
+      if (parsed.url) return parsed.url;
+    } catch {
+      // Không phải JSON, trả về content trực tiếp (URL)
+    }
+    
+    return this.messageContent.content;
+  }
+
+  /**
+   * Mở link trong tab mới
+   */
+  openLink() {
+    const url = this.getLinkUrl();
+    if (url) {
+      window.open(url, '_blank');
+    }
+  }
+
+  /**
+   * Lấy domain từ URL
+   */
+  getDomain(url: string): string {
+    try {
+      const domain = new URL(url).hostname;
+      return domain.replace('www.', '');
+    } catch {
+      return url;
+    }
+  }
+
+  /**
+   * Lấy domain từ content
+   */
+  getLinkDomain(): string {
+    return this.getDomain(this.getLinkUrl());
   }
 
 }

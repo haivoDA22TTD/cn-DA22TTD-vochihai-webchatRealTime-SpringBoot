@@ -28,12 +28,14 @@ public class MessageContentController {
 
     @Operation(summary = "Hiển thị tin nhắn trong phòng chat")
     @GetMapping("/{roomId}")
+    @ResponseBody
     public ResponseEntity<List<MessageContentDTO>> getMessagesByRoomId(@PathVariable UUID roomId) {
         return ResponseEntity.ok(messageContentService.getMessagesByRoomId(roomId));
     }
 
     @Operation(summary = "Upload ảnh cho tin nhắn")
     @PostMapping("/upload-image")
+    @ResponseBody
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             System.out.println("=== UPLOAD IMAGE DEBUG ===");
@@ -54,6 +56,159 @@ public class MessageContentController {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Failed to upload image: " + e.getMessage());
         }
+    }
+
+    /**
+     * Danh sách các định dạng file được phép upload
+     * Chỉ cho phép: .docx, .pptx, .xlsx, .pdf, .zip, .rar
+     */
+    private static final java.util.Set<String> ALLOWED_FILE_EXTENSIONS = java.util.Set.of(
+        ".docx", ".pptx", ".xlsx", ".xls", ".pdf", ".zip", ".rar"
+    );
+
+    @Operation(summary = "Upload file đính kèm cho tin nhắn")
+    @PostMapping("/upload-file")
+    @ResponseBody
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+        try {
+            System.out.println("=== UPLOAD FILE DEBUG ===");
+            String originalFilename = file.getOriginalFilename();
+            System.out.println("File name: " + originalFilename);
+            System.out.println("File size: " + file.getSize());
+            
+            // Kiểm tra định dạng file
+            if (originalFilename == null || originalFilename.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    java.util.Map.of("error", "Tên file không hợp lệ")
+                );
+            }
+            
+            String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            System.out.println("File extension: " + extension);
+            
+            if (!ALLOWED_FILE_EXTENSIONS.contains(extension)) {
+                System.err.println("ERROR: File extension not allowed: " + extension);
+                return ResponseEntity.badRequest().body(
+                    java.util.Map.of(
+                        "error", "Định dạng file không được phép",
+                        "message", "Chỉ cho phép các định dạng: .docx, .pptx, .xlsx, .xls, .pdf, .zip, .rar",
+                        "extension", extension
+                    )
+                );
+            }
+            
+            // Kiểm tra kích thước file (tối đa 50MB)
+            long maxSize = 50 * 1024 * 1024; // 50MB
+            if (file.getSize() > maxSize) {
+                return ResponseEntity.badRequest().body(
+                    java.util.Map.of(
+                        "error", "File quá lớn",
+                        "message", "Kích thước file tối đa là 50MB"
+                    )
+                );
+            }
+            
+            // Lưu file
+            String storedFileName = FileUtils.storeFile(file, "messages");
+            String fileUrl = FileUtils.getMessageImageUrl(storedFileName);
+            
+            System.out.println("Stored file name: " + storedFileName);
+            System.out.println("File URL: " + fileUrl);
+            System.out.println("=========================");
+            
+            // Trả về thông tin file dạng JSON
+            return ResponseEntity.ok(java.util.Map.of(
+                "url", fileUrl,
+                "name", originalFilename,
+                "size", file.getSize(),
+                "extension", extension
+            ));
+        } catch (Exception e) {
+            System.err.println("Upload failed: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(
+                java.util.Map.of("error", "Lỗi upload file: " + e.getMessage())
+            );
+        }
+    }
+
+    /**
+     * Lấy thông tin preview của một URL (Open Graph metadata)
+     * Dùng để hiển thị preview khi gửi link (như Zalo)
+     */
+    @Operation(summary = "Lấy thông tin preview của URL")
+    @GetMapping("/link-preview")
+    @ResponseBody
+    public ResponseEntity<?> getLinkPreview(@RequestParam("url") String url) {
+        try {
+            System.out.println("=== LINK PREVIEW DEBUG ===");
+            System.out.println("URL: " + url);
+            
+            // Validate URL
+            if (url == null || url.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    java.util.Map.of("error", "URL không được để trống")
+                );
+            }
+            
+            // Thêm protocol nếu thiếu
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://" + url;
+            }
+            
+            // Fetch và parse HTML
+            org.jsoup.nodes.Document doc = org.jsoup.Jsoup.connect(url)
+                .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .timeout(5000)
+                .get();
+            
+            // Lấy Open Graph metadata
+            String title = getMetaContent(doc, "og:title");
+            if (title == null || title.isEmpty()) {
+                title = doc.title();
+            }
+            
+            String description = getMetaContent(doc, "og:description");
+            if (description == null || description.isEmpty()) {
+                description = getMetaContent(doc, "description");
+            }
+            
+            String image = getMetaContent(doc, "og:image");
+            
+            System.out.println("Title: " + title);
+            System.out.println("Description: " + description);
+            System.out.println("Image: " + image);
+            System.out.println("=========================");
+            
+            return ResponseEntity.ok(java.util.Map.of(
+                "url", url,
+                "title", title != null ? title : "",
+                "description", description != null ? description : "",
+                "image", image != null ? image : ""
+            ));
+        } catch (Exception e) {
+            System.err.println("Link preview failed: " + e.getMessage());
+            return ResponseEntity.badRequest().body(
+                java.util.Map.of("error", "Không thể lấy thông tin từ URL: " + e.getMessage())
+            );
+        }
+    }
+    
+    /**
+     * Helper method để lấy content từ meta tag
+     */
+    private String getMetaContent(org.jsoup.nodes.Document doc, String property) {
+        // Thử lấy từ og: property
+        org.jsoup.nodes.Element element = doc.selectFirst("meta[property=" + property + "]");
+        if (element != null) {
+            return element.attr("content");
+        }
+        // Thử lấy từ name attribute
+        element = doc.selectFirst("meta[name=" + property + "]");
+        if (element != null) {
+            return element.attr("content");
+        }
+        return null;
     }
 
     @MessageMapping("/send-message")

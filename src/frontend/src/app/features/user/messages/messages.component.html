@@ -102,6 +102,12 @@
                 <span class="material-symbols-rounded">image</span>
               </label>
             </div>
+            <div class="file-upload">
+              <input type="file" id="file-input" (change)="onFileSelected($event)" style="display: none;" />
+              <label for="file-input" style="cursor: pointer; display: flex; align-items: center;" pTooltip="Gửi file (.docx, .pdf, .xlsx, .zip, .rar)">
+                <span class="material-symbols-rounded">attach_file</span>
+              </label>
+            </div>
             <div class="location-send">
               <span class="material-symbols-rounded" 
                     (click)="sendLocation()" 
@@ -271,6 +277,25 @@
     <div class="rename-dialog-actions">
       <button pButton label="Hủy" class="p-button-text" (click)="isShowRenameDialog = false"></button>
       <button pButton label="Lưu" (click)="renameGroup()" [disabled]="!newGroupName.trim()"></button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Dialog cảnh báo file không hợp lệ -->
+<p-dialog
+  [(visible)]="isShowFileErrorDialog"
+  [showHeader]="false"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '400px', maxWidth: '90%'}">
+  <div class="file-error-dialog">
+    <div class="file-error-icon">
+      <span class="material-symbols-rounded" style="font-size: 48px; color: #dc3545;">cancel</span>
+    </div>
+    <div class="file-error-title">Không thể gửi file</div>
+    <div class="file-error-message">{{fileErrorMessage}}</div>
+    <div class="file-error-actions">
+      <button pButton label="Đóng" (click)="isShowFileErrorDialog = false"></button>
     </div>
   </div>
 </p-dialog>

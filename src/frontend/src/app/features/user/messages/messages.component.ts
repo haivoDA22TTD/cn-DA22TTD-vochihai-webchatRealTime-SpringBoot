@@ -27,6 +27,11 @@ export class MessagesComponent implements OnInit, OnDestroy{
   selectedImage: File | null = null;
   imagePreview: string | null = null;
 
+  // File upload
+  selectedFile: File | null = null;
+  isShowFileErrorDialog: boolean = false;
+  fileErrorMessage: string = '';
+
  // Thêm thuộc tính để hiển thị thông báo spam cụ thể
   isSpamBlocked: boolean = false;
   spamErrorMessage: string = '';
@@ -257,20 +262,48 @@ export class MessagesComponent implements OnInit, OnDestroy{
       return;
     }
 
-    const messageToSend: MessageContent = {
-      content: this.messageToSend.content.trim(),
-      messageRoomId: this.selectedMessageRoom.id,
-      sender: this.currentUser.username,
-      messageType: MessageType.TEXT
-    };
+    const content = this.messageToSend.content.trim();
+    
+    // Kiểm tra xem tin nhắn có chứa URL không
+    const url = this.messageContentService.extractFirstUrl(content);
+    
+    if (url) {
+      // Nếu có URL, gửi tin nhắn LINK (chỉ lưu URL, không cần preview)
+      this.sendLinkMessage(url);
+    } else {
+      // Gửi tin nhắn TEXT bình thường
+      const messageToSend: MessageContent = {
+        content: content,
+        messageRoomId: this.selectedMessageRoom.id,
+        sender: this.currentUser.username,
+        messageType: MessageType.TEXT
+      };
 
-    // Gửi tin nhắn
-    this.messageContentService.sendMessage(messageToSend);
+      this.messageContentService.sendMessage(messageToSend);
+    }
     
     // Reset các giá trị sau khi gửi
     this.messageToSend = {};
     this.isSpamBlocked = false;
     this.spamErrorMessage = '';
+  }
+
+  /**
+   * Gửi tin nhắn chứa link
+   * Lưu URL trực tiếp, frontend sẽ hiển thị link có thể click
+   */
+  sendLinkMessage(url: string) {
+    console.log('Sending link message:', url);
+    
+    // Gửi tin nhắn LINK với URL trực tiếp (không cần JSON)
+    const messageToSend: MessageContent = {
+      content: url,
+      messageRoomId: this.selectedMessageRoom.id,
+      sender: this.currentUser.username,
+      messageType: MessageType.LINK
+    };
+
+    this.messageContentService.sendMessage(messageToSend);
   }
 
   onImageSelected(event: any) {
@@ -324,6 +357,78 @@ export class MessagesComponent implements OnInit, OnDestroy{
       error: (error) => {
         console.error('Failed to upload image:', error);
         alert('Không thể tải ảnh lên. Vui lòng thử lại.');
+      }
+    });
+  }
+
+  // ============ FILE UPLOAD ============
+
+  /**
+   * Xử lý khi người dùng chọn file
+   */
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Kiểm tra định dạng file
+    if (!this.messageContentService.isFileAllowed(file.name)) {
+      const extension = this.messageContentService.getFileExtension(file.name);
+      this.fileErrorMessage = `Định dạng file "${extension}" không được phép.\n\nChỉ cho phép các định dạng: .docx, .pptx, .xlsx, .xls, .pdf, .zip, .rar`;
+      this.isShowFileErrorDialog = true;
+      // Reset input
+      event.target.value = '';
+      return;
+    }
+
+    // Kiểm tra kích thước file (tối đa 50MB)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.fileErrorMessage = 'Kích thước file vượt quá 50MB.\n\nVui lòng chọn file nhỏ hơn.';
+      this.isShowFileErrorDialog = true;
+      event.target.value = '';
+      return;
+    }
+
+    this.selectedFile = file;
+    this.sendFileMessage();
+    event.target.value = '';
+  }
+
+  /**
+   * Gửi file đính kèm
+   */
+  sendFileMessage() {
+    if (!this.selectedFile) return;
+
+    console.log('Uploading file:', this.selectedFile.name);
+
+    this.messageContentService.uploadFile(this.selectedFile).subscribe({
+      next: (fileInfo: any) => {
+        console.log('File uploaded successfully:', fileInfo);
+
+        // Gửi tin nhắn với thông tin file dạng JSON
+        const messageToSend: MessageContent = {
+          content: JSON.stringify(fileInfo),
+          messageRoomId: this.selectedMessageRoom.id,
+          sender: this.currentUser.username,
+          messageType: MessageType.FILE
+        };
+
+        console.log('Sending file message:', messageToSend);
+        this.messageContentService.sendMessage(messageToSend);
+
+        // Reset
+        this.selectedFile = null;
+      },
+      error: (error) => {
+        console.error('Failed to upload file:', error);
+        if (error.error?.message) {
+          this.fileErrorMessage = error.error.message;
+        } else {
+          this.fileErrorMessage = 'Không thể tải file lên. Vui lòng thử lại.';
+        }
+        this.isShowFileErrorDialog = true;
+        this.selectedFile = null;
       }
     });
   }

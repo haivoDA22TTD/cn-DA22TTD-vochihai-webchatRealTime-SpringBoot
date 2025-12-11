@@ -99,6 +99,13 @@
             <version>0.12.6</version>
             <scope>runtime</scope>
         </dependency>
+        
+        <!-- Jsoup - HTML parser để lấy Open Graph metadata từ URL -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
     </dependencies>
 
     <!-- ĐOẠN NÀY LÀ QUAN TRỌNG NHẤT - THAY TOÀN BỘ <build> HIỆN TẠI BẰNG ĐOẠN NÀY -->

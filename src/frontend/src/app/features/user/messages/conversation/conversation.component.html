@@ -40,6 +40,12 @@
         <ng-container *ngIf="room.lastMessage?.messageType === 'LOCATION'">
           📍 Đã chia sẻ vị trí
         </ng-container>
+        <ng-container *ngIf="room.lastMessage?.messageType === 'FILE'">
+          📎 Đã gửi một file
+        </ng-container>
+        <ng-container *ngIf="room.lastMessage?.messageType === 'LINK'">
+          🔗 Đã gửi một liên kết
+        </ng-container>
         <ng-container *ngIf="room.lastMessage?.messageType === 'TEXT'">
           {{room.lastMessage?.content}}
         </ng-container>

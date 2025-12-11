@@ -7,15 +7,21 @@
   <div class="chat-message-content"
     [title]="messageContent?.dateSent | date : 'HH:mm:ss dd/MM/yyyy'">
     <div class="chat-message-username">{{messageContent?.sender}}</div>
+    
+    <!-- TEXT MESSAGE -->
     <div class="chat-message-text" *ngIf="messageContent?.messageType === 'TEXT'">
       {{messageContent?.content}}
     </div>
+    
+    <!-- IMAGE MESSAGE -->
     <div class="chat-message-image" *ngIf="messageContent?.messageType === 'IMAGE'">
       <img [src]="messageContent?.content" 
            alt="Image" 
            (error)="onImageError($event)"
            style="max-width: 300px; max-height: 300px; border-radius: 8px; cursor: pointer;" />
     </div>
+    
+    <!-- LOCATION MESSAGE -->
     <div class="chat-message-location" *ngIf="messageContent?.messageType === 'LOCATION'">
       <div class="location-preview" (click)="openLocationInMaps()">
         <div class="location-icon">📍</div>
@@ -37,6 +43,34 @@
         loading="lazy"
         referrerpolicy="no-referrer-when-downgrade">
       </iframe>
+    </div>
+
+    <!-- FILE MESSAGE -->
+    <div class="chat-message-file" *ngIf="messageContent?.messageType === 'FILE' && getFileInfo()">
+      <div class="file-preview" (click)="downloadFile()">
+        <div class="file-icon">{{getFileIcon(getFileInfo()!.extension)}}</div>
+        <div class="file-info">
+          <span class="file-name">{{getFileInfo()!.name}}</span>
+          <span class="file-size">{{formatFileSize(getFileInfo()!.size)}}</span>
+        </div>
+        <div class="file-action">
+          <span class="material-symbols-rounded">download</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINK MESSAGE -->
+    <div class="chat-message-link" *ngIf="messageContent?.messageType === 'LINK'">
+      <div class="link-preview" (click)="openLink()">
+        <div class="link-icon">🔗</div>
+        <div class="link-content">
+          <span class="link-url">{{getLinkUrl()}}</span>
+          <span class="link-domain">{{getLinkDomain()}}</span>
+        </div>
+        <div class="link-action">
+          <span class="material-symbols-rounded">open_in_new</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

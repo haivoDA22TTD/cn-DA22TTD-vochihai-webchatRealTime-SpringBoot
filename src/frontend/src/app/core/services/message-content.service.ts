@@ -94,6 +94,52 @@ export class MessageContentService {
     const url = `${this.apiUrl}/upload-image`;
     return this.http.post(url, formData, { responseType: 'text' });
   }
+
+  /**
+   * Upload file đính kèm lên server
+   * Chỉ cho phép: .docx, .pptx, .xlsx, .xls, .pdf, .zip, .rar
+   * @param file - File cần upload
+   * @returns Observable chứa thông tin file {url, name, size, extension}
+   */
+  uploadFile(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const url = `${this.apiUrl}/upload-file`;
+    return this.http.post(url, formData);
+  }
+
+  /**
+   * Danh sách các định dạng file được phép
+   */
+  readonly ALLOWED_FILE_EXTENSIONS = ['.docx', '.pptx', '.xlsx', '.xls', '.pdf', '.zip', '.rar'];
+
+  /**
+   * Kiểm tra file có được phép upload không
+   * @param fileName - Tên file
+   * @returns true nếu được phép, false nếu không
+   */
+  isFileAllowed(fileName: string): boolean {
+    const extension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+    return this.ALLOWED_FILE_EXTENSIONS.includes(extension);
+  }
+
+  /**
+   * Lấy extension của file
+   */
+  getFileExtension(fileName: string): string {
+    return fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+  }
+
+  /**
+   * Trích xuất URL đầu tiên từ text
+   * Trả về URL nếu tìm thấy, null nếu không
+   */
+  extractFirstUrl(text: string): string | null {
+    // Tạo regex mới mỗi lần để tránh vấn đề với lastIndex
+    const urlPattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/i;
+    const match = text.match(urlPattern);
+    return match ? match[0] : null;
+  }
   //Ngắt kết nối WebSocket + hủy subscriptions
   disconnect() {
     if (this.stompClient) {

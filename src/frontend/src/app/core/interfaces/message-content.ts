@@ -49,5 +49,37 @@ export enum MessageType {
    * content chứa tọa độ "lat,lng"
    * Frontend hiển thị Google Maps embed với marker tại vị trí đó
    */
-  LOCATION = 'LOCATION'
+  LOCATION = 'LOCATION',
+  
+  /**
+   * Tin nhắn gửi file đính kèm
+   * content chứa JSON: {url, name, size, extension}
+   */
+  FILE = 'FILE',
+  
+  /**
+   * Tin nhắn chứa link với preview
+   * content chứa JSON: {url, title, description, image}
+   */
+  LINK = 'LINK'
+}
+
+/**
+ * Interface cho thông tin file đính kèm
+ */
+export interface FileInfo {
+  url: string;
+  name: string;
+  size: number;
+  extension: string;
+}
+
+/**
+ * Interface cho thông tin link preview
+ */
+export interface LinkPreview {
+  url: string;
+  title?: string;
+  description?: string;
+  image?: string;
 }
