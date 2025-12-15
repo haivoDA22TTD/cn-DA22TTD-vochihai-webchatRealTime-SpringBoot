@@ -1,4 +1,6 @@
-# Tên đề tài: Xây dựng web chat real-time với Angular và Spring Boot
+# Tên đề tài: Xây dựng web chat real-time sử dụng Angular và Spring Boot
+<img width="1111" height="552" alt="image" src="https://github.com/user-attachments/assets/17eb3cfa-096f-404d-9105-a4d0ef4f7df9" /> <br>
+
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat&logo=angular&logoColor=white)](https://angular.io/)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
@@ -153,8 +155,8 @@
 #### Bước 1: Clone dự án
 
 ```bash
-git clone <repository-url>
-cd chat-app
+git clone(https://github.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot)
+cd cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot
 ```
 
 #### Bước 2: Cài đặt PrimeNG Themes (Bắt buộc)
@@ -409,28 +411,6 @@ Sau khi chạy backend, truy cập Swagger UI để xem chi tiết API:
 
 **URL**: http://localhost:8080/swagger-ui.html
 
-### Các API chính:
-
-#### User APIs
-- `POST /api/v1/users` - Đăng nhập/Đăng ký (trả về JWT token)
-- `GET /api/v1/users/online` - Lấy danh sách người dùng online
-- `GET /api/v1/users/search/{username}` - Tìm kiếm người dùng
-- `POST /api/v1/users/avatar` - Upload avatar
-
-#### Message Room APIs
-- `POST /api/v1/rooms` - Tạo phòng chat
-- `GET /api/v1/rooms` - Lấy danh sách phòng
-- `PUT /api/v1/rooms/{id}/name` - Đổi tên phòng chat
-
-#### Message APIs
-- `GET /api/v1/messages/room/{roomId}` - Lấy tin nhắn theo phòng
-- `POST /api/v1/messages/upload` - Upload file
-
-#### WebSocket Endpoints
-- `/api/ws` - WebSocket connection
-- `/app/chat.send` - Gửi tin nhắn
-- `/topic/room/{roomId}` - Subscribe tin nhắn phòng
-
 ---
 
 ## 🐛 Xử lý lỗi thường gặp
@@ -498,7 +478,4 @@ Nếu dự án hữu ích, hãy cho một ⭐ trên GitHub!
 
 ---
 
-## ⭐ Support
-
-Nếu dự án hữu ích, hãy cho một ⭐ trên GitHub!
 
