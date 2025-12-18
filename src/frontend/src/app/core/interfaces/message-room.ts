@@ -8,6 +8,8 @@ export interface MessageRoom {
   name?: string;
   // Phòng có phải là nhóm hay không
   isGroup?: boolean;
+  // URL ảnh nền cho cuộc trò chuyện (đồng bộ cho tất cả thành viên)
+  backgroundUrl?: string;
   // Thời gian tạo phòng (định dạng ISO string)
   createdDate?: string;
   // ID của người tạo phòng

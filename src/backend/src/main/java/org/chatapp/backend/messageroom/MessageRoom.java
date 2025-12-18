@@ -30,6 +30,9 @@ public class MessageRoom {
     private String name;
 
     private Boolean isGroup;
+    
+    // URL ảnh nền cho cuộc trò chuyện
+    private String backgroundUrl;
 
     @CreatedDate
     private LocalDateTime createdDate;

@@ -2,7 +2,10 @@ package org.chatapp.backend.messageroom;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.chatapp.backend.messageroommember.MessageRoomMemberDTO;
+import org.chatapp.backend.messageroommember.MessageRoomMemberService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +17,8 @@ import java.util.UUID;
 public class MessageRoomController {
 
     private final MessageRoomService messageRoomService;
+    private final MessageRoomMemberService messageRoomMemberService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
 
     @Operation(summary = "Tìm phòng chat")
@@ -50,6 +55,26 @@ public class MessageRoomController {
     public ResponseEntity<MessageRoomDTO> renameRoom(@PathVariable final UUID roomId,
                                                      @RequestParam final String newName) {
         return ResponseEntity.ok(messageRoomService.renameRoom(roomId, newName));
+    }
+
+
+    @Operation(summary = "Đặt ảnh nền cho cuộc trò chuyện")
+    @PutMapping("/{roomId}/background")
+    public ResponseEntity<MessageRoomDTO> setBackground(@PathVariable final UUID roomId,
+                                                        @RequestParam final String backgroundUrl) {
+        MessageRoomDTO updatedRoom = messageRoomService.setBackground(roomId, backgroundUrl);
+        
+        // Gửi thông báo realtime cho tất cả thành viên trong phòng
+        List<MessageRoomMemberDTO> members = messageRoomMemberService.findByMessageRoomId(roomId);
+        for (MessageRoomMemberDTO member : members) {
+            simpMessagingTemplate.convertAndSendToUser(
+                member.getUsername(),
+                "/queue/room-updates",
+                updatedRoom
+            );
+        }
+        
+        return ResponseEntity.ok(updatedRoom);
     }
 
 }

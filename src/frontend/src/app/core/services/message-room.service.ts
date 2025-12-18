@@ -78,4 +78,17 @@ export class MessageRoomService {
     return this.http.put<MessageRoom>(url, null, { params });
   }
 
+
+  /**
+   * Đặt ảnh nền cho cuộc trò chuyện
+   * Ảnh nền sẽ được đồng bộ cho tất cả thành viên trong phòng
+   * @param roomId ID của phòng chat
+   * @param backgroundUrl URL của ảnh nền
+   */
+  setBackground(roomId: string, backgroundUrl: string): Observable<MessageRoom> {
+    const url = `${this.apiUrl}/${roomId}/background`;
+    const params = new HttpParams().set('backgroundUrl', backgroundUrl);
+    return this.http.put<MessageRoom>(url, null, { params });
+  }
+
 }

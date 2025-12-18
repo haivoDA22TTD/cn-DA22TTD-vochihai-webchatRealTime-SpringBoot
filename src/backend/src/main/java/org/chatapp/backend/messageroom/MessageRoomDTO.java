@@ -15,6 +15,7 @@ public class MessageRoomDTO implements Serializable {
     private UUID id;
     private String name;
     private Boolean isGroup;
+    private String backgroundUrl;
     private LocalDateTime createdDate;
     private String createdById;
     private MessageContentDTO lastMessage;

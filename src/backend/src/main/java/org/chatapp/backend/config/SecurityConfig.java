@@ -66,7 +66,11 @@ public class SecurityConfig {
                 // PUBLIC ENDPOINTS - Không cần đăng nhập
                 .requestMatchers("/api/v1/users", "/api/v1/users/register").permitAll()  // Đăng nhập/đăng ký
                 .requestMatchers("/api/ws/**").permitAll()                               // WebSocket
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()        // API docs
+                // Swagger/OpenAPI endpoints - cho phép tất cả
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html").permitAll()
+                .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
+                .requestMatchers("/swagger-resources", "/swagger-resources/**").permitAll()
+                .requestMatchers("/webjars/**").permitAll()
                 .requestMatchers("/uploads/**", "/images/**").permitAll()                // Static files (ảnh)
                 
                 // PROTECTED ENDPOINTS - Cần JWT token hợp lệ

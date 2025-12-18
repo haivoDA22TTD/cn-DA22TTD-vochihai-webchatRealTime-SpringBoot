@@ -133,4 +133,25 @@ public class MessageRoomService {
                 .orElseThrow(() -> new RuntimeException("Room not found"));
     }
 
+
+    /**
+     * Đặt ảnh nền cho cuộc trò chuyện
+     * Ảnh nền sẽ được đồng bộ cho tất cả thành viên trong phòng
+     */
+    @CachePut(value = "rooms", key = "#roomId")
+    @CacheEvict(value = "userRoomList", allEntries = true)
+    @Transactional
+    public MessageRoomDTO setBackground(final UUID roomId, final String backgroundUrl) {
+        return messageRoomRepository.findById(roomId)
+                .map(room -> {
+                    room.setBackgroundUrl(backgroundUrl);
+                    final MessageRoom saved = messageRoomRepository.save(room);
+                    final MessageRoomDTO roomDTO = messageRoomMapper.toDTO(saved, new MessageRoomDTO());
+                    final List<MessageRoomMemberDTO> roomMembers = messageRoomMemberService.findByMessageRoomId(roomDTO.getId());
+                    roomDTO.setMembers(roomMembers != null ? roomMembers : new ArrayList<>());
+                    return roomDTO;
+                })
+                .orElseThrow(() -> new RuntimeException("Room not found"));
+    }
+
 }

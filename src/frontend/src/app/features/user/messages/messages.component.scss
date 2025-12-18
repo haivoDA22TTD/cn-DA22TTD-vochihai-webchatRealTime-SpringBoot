@@ -595,39 +595,169 @@ p-dialog ::ng-deep {
   }
 }
 
-// CSS cho file error dialog
-.file-error-dialog {
+// CSS cho error dialog (file error, spam error)
+.error-dialog {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   text-align: center;
 }
 
-.file-error-icon {
+.error-dialog-icon {
   margin-bottom: 1rem;
 }
 
-.file-error-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+.error-dialog-title {
+  font-size: 1.5rem;
+  font-weight: 700;
   color: #dc3545;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.file-error-message {
+.error-dialog-message {
   color: var(--text-color);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.6;
   white-space: pre-line;
   margin-bottom: 1.5rem;
 }
 
-.file-error-actions {
+.error-dialog-actions {
   display: flex;
   justify-content: center;
   
   button {
-    min-width: 100px;
+    min-width: 120px;
+    font-weight: 600;
+  }
+}
+
+// CSS cho spam dialog
+.spam-dialog {
+  .error-dialog-title {
+    color: #f59e0b;
+  }
+}
+
+// CSS cho chat background
+.chat-area.has-background {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+// CSS cho background upload section
+.theme-background {
+  margin-top: 1rem;
+  
+  p {
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+  }
+}
+
+.background-upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.background-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: var(--surface-100);
+  border: 2px dashed var(--surface-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  color: var(--text-color);
+  
+  &:hover {
+    border-color: var(--primary-color);
+    background-color: var(--surface-0);
+  }
+  
+  &.uploading {
+    opacity: 0.7;
+    cursor: wait;
+    
+    .material-symbols-rounded {
+      animation: spin 1s linear infinite;
+    }
+  }
+  
+  .material-symbols-rounded {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+  }
+}
+
+.background-preview {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--primary-color);
+  
+  img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .remove-background-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(220, 53, 69, 0.9);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    
+    &:hover {
+      background-color: #dc3545;
+      transform: scale(1.1);
+    }
+    
+    .material-symbols-rounded {
+      font-size: 1rem;
+      color: white;
+    }
+  }
+}
+
+.clear-background-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background-color: transparent;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  color: var(--msg-date);
+  
+  &:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: #fef2f2;
+  }
+  
+  .material-symbols-rounded {
+    font-size: 1rem;
   }
 }

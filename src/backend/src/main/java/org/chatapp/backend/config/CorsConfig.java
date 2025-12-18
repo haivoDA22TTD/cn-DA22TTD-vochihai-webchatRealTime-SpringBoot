@@ -27,8 +27,10 @@ public class CorsConfig implements WebMvcConfigurer {
                     "http://localhost:4200",      // Angular dev server (ng serve)
                     "http://localhost",           // Docker frontend (Nginx)
                     "http://localhost:80",        // Docker frontend (port 80)
+                    "http://localhost:8080",      // Backend (Swagger UI)
                     "http://127.0.0.1:4200",      // Localhost dạng IP
-                    "http://127.0.0.1"            // Localhost dạng IP
+                    "http://127.0.0.1",           // Localhost dạng IP
+                    "http://127.0.0.1:8080"       // Backend dạng IP
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // Các HTTP method được phép
                 .allowedHeaders("*")              // Cho phép tất cả headers

@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { User } from '../interfaces/user';
 import * as SockJS from 'sockjs-client';
 import { MessageContent } from '../interfaces/message-content';
+import { MessageRoom } from '../interfaces/message-room';
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +20,16 @@ export class MessageContentService {
   private stompClient: CompatClient = {} as CompatClient;
   // Subscription để lắng nghe tin nhắn
   private subscriptionMessages: any;
-   // Subscription để lắng nghe lỗi từ WebSocket
+  // Subscription để lắng nghe lỗi từ WebSocket
   private subscriptionErrors: any;
-   // Subject phát ra message mới
+  // Subscription để lắng nghe cập nhật phòng chat (ảnh nền, tên, ...)
+  private subscriptionRoomUpdates: any;
+  // Subject phát ra message mới
   private messagesSubject = new Subject<MessageContent>();
   // Subject phát ra lỗi WebSocket
   private errorSubject = new Subject<string>();
+  // Subject phát ra cập nhật phòng chat
+  private roomUpdatesSubject = new Subject<MessageRoom>();
     // Kết nối đến WebSocket server 
   constructor(private http: HttpClient) { }
 
@@ -44,11 +49,12 @@ export class MessageContentService {
       }
     );
   }
-  //Khi kết nối thành công  đăng ký nhận tin nhắn + lỗi
+  //Khi kết nối thành công  đăng ký nhận tin nhắn + lỗi + cập nhật phòng
   private onConnect(user: User) {
     console.log('WebSocket connected for user:', user.username);
     this.subscribeMessages(user);
-    this.subscribeErrors(user); // Thêm subscription để nhận thông báo lỗi
+    this.subscribeErrors(user);
+    this.subscribeRoomUpdates(user); // Subscribe để nhận cập nhật phòng chat (ảnh nền, ...)
   }
   //Lắng nghe tin nhắn đến từ WebSocket
   private subscribeMessages(user: User) {
@@ -69,6 +75,19 @@ export class MessageContentService {
         console.log('Error message received from WebSocket:', message.body);
         const errorMessage = message.body;
         this.errorSubject.next(errorMessage);   // phát lỗi ra ngoài
+      }
+    );
+  }
+
+  // Lắng nghe cập nhật phòng chat (ảnh nền, tên, ...) từ WebSocket
+  private subscribeRoomUpdates(user: User) {
+    console.log('Subscribing to room updates for user:', user.username);
+    this.subscriptionRoomUpdates = this.stompClient.subscribe(
+      `/user/${user.username}/queue/room-updates`,
+      (message: any) => {
+        console.log('Room update received from WebSocket:', message.body);
+        const roomUpdate = JSON.parse(message.body);
+        this.roomUpdatesSubject.next(roomUpdate);
       }
     );
   }
@@ -153,6 +172,9 @@ export class MessageContentService {
     if (this.subscriptionErrors) {
       this.subscriptionErrors.unsubscribe();
     }
+    if (this.subscriptionRoomUpdates) {
+      this.subscriptionRoomUpdates.unsubscribe();
+    }
   }
   //Observable để component subscribe và nhận message
   subscribeMessagesObservable(): Observable<MessageContent> {
@@ -163,6 +185,12 @@ export class MessageContentService {
   subscribeErrorsObservable(): Observable<string> {
     return this.errorSubject.asObservable();
   }
+
+  // Observable để nhận cập nhật phòng chat (ảnh nền, tên, ...)
+  subscribeRoomUpdatesObservable(): Observable<MessageRoom> {
+    return this.roomUpdatesSubject.asObservable();
+  }
+
   //Lấy lịch sử tin nhắn theo room từ REST API
   getMessagesByRoomId(roomId?: string): Observable<MessageContent[]> {
     const url = `${this.apiUrl}/${roomId}`;

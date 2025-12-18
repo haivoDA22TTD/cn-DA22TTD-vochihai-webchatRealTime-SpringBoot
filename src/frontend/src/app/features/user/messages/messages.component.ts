@@ -32,9 +32,17 @@ export class MessagesComponent implements OnInit, OnDestroy{
   isShowFileErrorDialog: boolean = false;
   fileErrorMessage: string = '';
 
- // Thêm thuộc tính để hiển thị thông báo spam cụ thể
+  // Location error dialog
+  isShowLocationErrorDialog: boolean = false;
+  locationErrorMessage: string = '';
+
+  // Thêm thuộc tính để hiển thị thông báo spam cụ thể
   isSpamBlocked: boolean = false;
   spamErrorMessage: string = '';
+  isShowSpamDialog: boolean = false;
+
+  // Chat background - upload từ thiết bị và đồng bộ cho tất cả thành viên
+  isUploadingBackground: boolean = false;
 
   themeMode: boolean = false;
   themeColor = this.themeService.getGetThemeColorObject(this.themeService.themeColor);
@@ -101,6 +109,7 @@ export class MessagesComponent implements OnInit, OnDestroy{
     this.findMessageRoomAtLeastOneContent();
     this.subscribeMessages();
     this.subscribeToErrorMessages();
+    this.subscribeToRoomUpdates();
   }
 
 
@@ -114,14 +123,38 @@ export class MessagesComponent implements OnInit, OnDestroy{
         
         this.isSpamBlocked = true;
         this.spamErrorMessage = errorMessage;
-        
-        // Tự động ẩn thông báo sau 5 giây
-        setTimeout(() => {
-          this.clearSpamError();
-        }, 5000);
+        this.isShowSpamDialog = true; // Hiển thị dialog thay vì notification
       },
       error: (error: any) => {
         console.error('Error subscribing to errors:', error);
+      }
+    });
+  }
+
+  // Subscribe để nhận cập nhật phòng chat (ảnh nền, tên, ...) realtime
+  subscribeToRoomUpdates() {
+    this.messageContentService.subscribeRoomUpdatesObservable().subscribe({
+      next: (roomUpdate: MessageRoom) => {
+        console.log('=== ROOM UPDATE RECEIVED ===');
+        console.log('Room ID:', roomUpdate.id);
+        console.log('Background URL:', roomUpdate.backgroundUrl);
+        console.log('============================');
+        
+        // Cập nhật phòng chat đang chọn nếu trùng ID
+        if (this.selectedMessageRoom.id === roomUpdate.id) {
+          this.selectedMessageRoom.backgroundUrl = roomUpdate.backgroundUrl;
+          this.selectedMessageRoom.name = roomUpdate.name;
+        }
+        
+        // Cập nhật trong danh sách rooms
+        const roomIndex = this.messageRooms.findIndex(r => r.id === roomUpdate.id);
+        if (roomIndex !== -1) {
+          this.messageRooms[roomIndex].backgroundUrl = roomUpdate.backgroundUrl;
+          this.messageRooms[roomIndex].name = roomUpdate.name;
+        }
+      },
+      error: (error: any) => {
+        console.error('Error subscribing to room updates:', error);
       }
     });
   }
@@ -356,7 +389,21 @@ export class MessagesComponent implements OnInit, OnDestroy{
       },
       error: (error) => {
         console.error('Failed to upload image:', error);
-        alert('Không thể tải ảnh lên. Vui lòng thử lại.');
+        
+        // Xử lý các loại lỗi khác nhau
+        if (error.error?.message) {
+          this.fileErrorMessage = error.error.message;
+        } else if (error.status === 413) {
+          this.fileErrorMessage = 'Kích thước ảnh vượt quá giới hạn cho phép (50MB).\n\nVui lòng chọn ảnh nhỏ hơn.';
+        } else if (error.status === 0) {
+          this.fileErrorMessage = 'Kích thước ảnh quá lớn hoặc kết nối bị gián đoạn.\n\nVui lòng chọn ảnh nhỏ hơn 50MB.';
+        } else {
+          this.fileErrorMessage = 'Không thể tải ảnh lên.\n\nVui lòng thử lại sau.';
+        }
+        
+        this.isShowFileErrorDialog = true;
+        this.selectedImage = null;
+        this.imagePreview = null;
       }
     });
   }
@@ -422,11 +469,18 @@ export class MessagesComponent implements OnInit, OnDestroy{
       },
       error: (error) => {
         console.error('Failed to upload file:', error);
+        
+        // Xử lý các loại lỗi khác nhau
         if (error.error?.message) {
           this.fileErrorMessage = error.error.message;
+        } else if (error.status === 413 || error.error?.error?.includes('quá lớn')) {
+          this.fileErrorMessage = 'Kích thước file vượt quá giới hạn cho phép (50MB).\n\nVui lòng chọn file nhỏ hơn.';
+        } else if (error.status === 0) {
+          this.fileErrorMessage = 'Kích thước file quá lớn hoặc kết nối bị gián đoạn.\n\nVui lòng chọn file nhỏ hơn 50MB.';
         } else {
-          this.fileErrorMessage = 'Không thể tải file lên. Vui lòng thử lại.';
+          this.fileErrorMessage = 'Không thể tải file lên.\n\nVui lòng thử lại sau.';
         }
+        
         this.isShowFileErrorDialog = true;
         this.selectedFile = null;
       }
@@ -437,6 +491,84 @@ export class MessagesComponent implements OnInit, OnDestroy{
   clearSpamError(): void {
     this.isSpamBlocked = false;
     this.spamErrorMessage = '';
+    this.isShowSpamDialog = false;
+  }
+
+  // ============ CHAT BACKGROUND ============
+  
+  /**
+   * Xử lý khi người dùng chọn ảnh nền từ thiết bị
+   */
+  onBackgroundSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file || !file.type.startsWith('image/')) {
+      event.target.value = '';
+      return;
+    }
+
+    if (!this.selectedMessageRoom.id) {
+      this.fileErrorMessage = 'Vui lòng chọn một cuộc trò chuyện trước.';
+      this.isShowFileErrorDialog = true;
+      event.target.value = '';
+      return;
+    }
+
+    this.isUploadingBackground = true;
+
+    // Upload ảnh lên server
+    this.messageContentService.uploadImage(file).subscribe({
+      next: (imageUrl: string) => {
+        const cleanUrl = imageUrl.trim();
+        
+        // Cập nhật ảnh nền cho phòng chat
+        this.messageRoomService.setBackground(this.selectedMessageRoom.id!, cleanUrl).subscribe({
+          next: (room: MessageRoom) => {
+            this.selectedMessageRoom.backgroundUrl = room.backgroundUrl;
+            // Cập nhật trong danh sách rooms
+            const roomIndex = this.messageRooms.findIndex(r => r.id === room.id);
+            if (roomIndex !== -1) {
+              this.messageRooms[roomIndex].backgroundUrl = room.backgroundUrl;
+            }
+            this.isUploadingBackground = false;
+          },
+          error: (error) => {
+            console.error('Failed to set background:', error);
+            this.fileErrorMessage = 'Không thể đặt ảnh nền. Vui lòng thử lại.';
+            this.isShowFileErrorDialog = true;
+            this.isUploadingBackground = false;
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Failed to upload background:', error);
+        this.fileErrorMessage = 'Không thể tải ảnh nền lên. Vui lòng thử lại.';
+        this.isShowFileErrorDialog = true;
+        this.isUploadingBackground = false;
+      }
+    });
+
+    event.target.value = '';
+  }
+
+  /**
+   * Xóa ảnh nền cuộc trò chuyện
+   */
+  removeBackground() {
+    if (!this.selectedMessageRoom.id) return;
+
+    this.messageRoomService.setBackground(this.selectedMessageRoom.id, '').subscribe({
+      next: (room: MessageRoom) => {
+        this.selectedMessageRoom.backgroundUrl = '';
+        // Cập nhật trong danh sách rooms
+        const roomIndex = this.messageRooms.findIndex(r => r.id === room.id);
+        if (roomIndex !== -1) {
+          this.messageRooms[roomIndex].backgroundUrl = '';
+        }
+      },
+      error: (error) => {
+        console.error('Failed to remove background:', error);
+      }
+    });
   }
 
   logout() {
@@ -634,7 +766,8 @@ export class MessagesComponent implements OnInit, OnDestroy{
   // Gửi vị trí GPS
   sendLocation() {
     if (!navigator.geolocation) {
-      alert('Trình duyệt của bạn không hỗ trợ định vị GPS');
+      this.locationErrorMessage = 'Trình duyệt của bạn không hỗ trợ định vị GPS.';
+      this.isShowLocationErrorDialog = true;
       return;
     }
 
@@ -658,19 +791,22 @@ export class MessagesComponent implements OnInit, OnDestroy{
       },
       (error) => {
         this.isGettingLocation = false;
+        let errorMsg = '';
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            alert('Bạn đã từ chối quyền truy cập vị trí');
+            errorMsg = 'Quyền truy cập vị trí đã bị chặn.\n\nĐể sử dụng tính năng này:\n1. Click vào biểu tượng 🔒 bên trái thanh địa chỉ\n2. Tìm mục "Vị trí" và chọn "Cho phép"\n3. Tải lại trang (F5)';
             break;
           case error.POSITION_UNAVAILABLE:
-            alert('Không thể lấy thông tin vị trí');
+            errorMsg = 'Không thể lấy thông tin vị trí.\n\nVui lòng kiểm tra GPS hoặc kết nối mạng.';
             break;
           case error.TIMEOUT:
-            alert('Yêu cầu lấy vị trí đã hết thời gian');
+            errorMsg = 'Yêu cầu lấy vị trí đã hết thời gian.\n\nVui lòng thử lại.';
             break;
           default:
-            alert('Có lỗi xảy ra khi lấy vị trí');
+            errorMsg = 'Có lỗi xảy ra khi lấy vị trí.\n\nVui lòng thử lại sau.';
         }
+        this.locationErrorMessage = errorMsg;
+        this.isShowLocationErrorDialog = true;
       },
       {
         enableHighAccuracy: true,

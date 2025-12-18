@@ -17,6 +17,7 @@ public class MessageRoomMapper {
         messageRoomDTO.setId(messageRoom.getId());
         messageRoomDTO.setName(messageRoom.getName());
         messageRoomDTO.setIsGroup(messageRoom.getIsGroup());
+        messageRoomDTO.setBackgroundUrl(messageRoom.getBackgroundUrl());
         messageRoomDTO.setCreatedDate(messageRoom.getCreatedDate());
         messageRoomDTO.setCreatedById(messageRoom.getCreatedBy().getUsername());
         return messageRoomDTO;

@@ -56,22 +56,12 @@
       </div>
     
       
-      <div class="chat-area" id="chat-area">
+      <div class="chat-area" id="chat-area" [style.backgroundImage]="selectedMessageRoom.backgroundUrl ? 'url(' + selectedMessageRoom.backgroundUrl + ')' : 'none'" [class.has-background]="selectedMessageRoom.backgroundUrl">
         <app-message-contents-list 
           [selectedMessageRoom]="selectedMessageRoom"
           [currentUser]="currentUser"
           style="flex-grow: 1;">
         </app-message-contents-list>
-        <!-- Thêm phần hiển thị thông báo lỗi spam ngay phía trên form nhập tin nhắn -->
-  <div *ngIf="isSpamBlocked" class="spam-error-notification">
-    <div class="spam-error-content">
-      <span class="spam-error-icon">⚠️</span>
-      <span class="spam-error-message">{{ spamErrorMessage }}</span>
-      <button class="spam-error-close" (click)="clearSpamError()" title="Đóng thông báo">
-        ×
-      </button>
-    </div>
-  </div>
         <div style="text-align: center;">
           <span class="material-symbols-rounded">arrow_upward</span>
         </div>
@@ -172,6 +162,37 @@
                   <div class="theme-button" [style.backgroundColor]="theme.color"></div>
                 </ng-template>
               </p-dropdown>
+            </div>
+            <div class="theme-background">
+              <p>Ảnh nền cuộc trò chuyện</p>
+              <div class="background-upload-section">
+                <!-- Nút chọn ảnh từ thiết bị -->
+                <input type="file" 
+                       id="background-input" 
+                       accept="image/*" 
+                       (change)="onBackgroundSelected($event)" 
+                       style="display: none;" />
+                <label for="background-input" class="background-upload-btn" [class.uploading]="isUploadingBackground">
+                  <span class="material-symbols-rounded">{{isUploadingBackground ? 'hourglass_empty' : 'add_photo_alternate'}}</span>
+                  <span>{{isUploadingBackground ? 'Đang tải...' : 'Chọn ảnh từ thiết bị'}}</span>
+                </label>
+                
+                <!-- Preview ảnh nền hiện tại -->
+                <div class="background-preview" *ngIf="selectedMessageRoom.backgroundUrl">
+                  <img [src]="selectedMessageRoom.backgroundUrl" alt="Background preview" />
+                  <button class="remove-background-btn" (click)="removeBackground()" pTooltip="Xóa ảnh nền">
+                    <span class="material-symbols-rounded">delete</span>
+                  </button>
+                </div>
+                
+                <!-- Nút xóa ảnh nền nếu có -->
+                <button *ngIf="selectedMessageRoom.backgroundUrl" 
+                        class="clear-background-btn" 
+                        (click)="removeBackground()">
+                  <span class="material-symbols-rounded">block</span>
+                  <span>Xóa ảnh nền</span>
+                </button>
+              </div>
             </div>
           </div>
       
@@ -281,21 +302,63 @@
   </div>
 </p-dialog>
 
-<!-- Dialog cảnh báo file không hợp lệ -->
+<!-- Dialog cảnh báo lỗi upload file/ảnh -->
 <p-dialog
   [(visible)]="isShowFileErrorDialog"
   [showHeader]="false"
   [modal]="true"
   [dismissableMask]="true"
-  [style]="{ width: '400px', maxWidth: '90%'}">
-  <div class="file-error-dialog">
-    <div class="file-error-icon">
-      <span class="material-symbols-rounded" style="font-size: 48px; color: #dc3545;">cancel</span>
+  [style]="{ width: '420px', maxWidth: '90%'}">
+  <div class="error-dialog">
+    <div class="error-dialog-icon">
+      <span class="material-symbols-rounded" style="font-size: 64px; color: #dc3545;">cancel</span>
     </div>
-    <div class="file-error-title">Không thể gửi file</div>
-    <div class="file-error-message">{{fileErrorMessage}}</div>
-    <div class="file-error-actions">
+    <div class="error-dialog-title">Lỗi tải lên</div>
+    <div class="error-dialog-message">{{fileErrorMessage}}</div>
+    <div class="error-dialog-actions">
       <button pButton label="Đóng" (click)="isShowFileErrorDialog = false"></button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Dialog cảnh báo spam tin nhắn -->
+<p-dialog
+  [(visible)]="isShowSpamDialog"
+  [showHeader]="false"
+  [modal]="true"
+  [dismissableMask]="true"
+  [closable]="false"
+  [style]="{ width: '420px', maxWidth: '90%'}">
+  <div class="error-dialog spam-dialog">
+    <div class="error-dialog-icon">
+      <span class="material-symbols-rounded" style="font-size: 64px; color: #f59e0b;">warning</span>
+    </div>
+    <div class="error-dialog-title" style="color: #f59e0b;">Giới hạn gửi tin nhắn</div>
+    <div class="error-dialog-message">
+      Bạn đã đạt giới hạn gửi tin nhắn.<br><br>
+      Vui lòng đợi <strong>1 phút</strong> cho lần gửi tiếp theo.
+    </div>
+    <div class="error-dialog-actions">
+      <button pButton label="Đã hiểu" class="p-button-warning" (click)="clearSpamError()"></button>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Dialog lỗi vị trí GPS -->
+<p-dialog
+  [(visible)]="isShowLocationErrorDialog"
+  [showHeader]="false"
+  [modal]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '420px', maxWidth: '90%'}">
+  <div class="error-dialog location-dialog">
+    <div class="error-dialog-icon">
+      <span class="material-symbols-rounded" style="font-size: 64px; color: #f59e0b;">location_off</span>
+    </div>
+    <div class="error-dialog-title" style="color: #f59e0b;">Không thể truy cập vị trí</div>
+    <div class="error-dialog-message">{{locationErrorMessage}}</div>
+    <div class="error-dialog-actions">
+      <button pButton label="Đóng" class="p-button-warning" (click)="isShowLocationErrorDialog = false"></button>
     </div>
   </div>
 </p-dialog>

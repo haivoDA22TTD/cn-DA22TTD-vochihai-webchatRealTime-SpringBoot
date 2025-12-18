@@ -35,6 +35,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;  // Service xử lý JWT
 
     /**
+     * Bỏ qua filter cho các endpoint public (Swagger, WebSocket, etc.)
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui") ||
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/swagger-resources") ||
+               path.startsWith("/webjars") ||
+               path.startsWith("/api/ws") ||
+               path.equals("/api/v1/users") ||
+               path.equals("/api/v1/users/register");
+    }
+
+    /**
      * Xử lý filter cho mỗi request
      * @param request - HTTP request
      * @param response - HTTP response
