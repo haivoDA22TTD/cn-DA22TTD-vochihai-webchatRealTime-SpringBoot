@@ -18,7 +18,7 @@
 ![Sơ đồ kiến trúc hệ thống](progress-report/so-do-kien-truc-he-thong.png)
 
 ## 📌 Poster đề tài
-![Poster đề tài](progress-report/Web%20chat%20Real%20Time.png)
+![Poster đề tài](progress-report/poster.png)
 
 
 ## Cơ sở dữ liệu
