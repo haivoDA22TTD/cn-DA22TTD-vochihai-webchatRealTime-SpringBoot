@@ -19,8 +19,6 @@
 
 ## 📌 Poster đề tài
 ![Poster đề tài](progress-report/poster.png)
-
-
 ## Cơ sở dữ liệu
 <p align="center">
   <img width="775" height="733" alt="image" src="https://github.com/user-attachments/assets/5eb35b0b-0783-4725-adc4-ff64f8d6637e" />
@@ -155,7 +153,7 @@
 #### Bước 1: Clone dự án
 
 ```bash
-git clone(https://github.com/haivoDA22TTD/cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot)
+git clone https://github.com/haivoDA22TTD/cn-DA22TTD-vochihai-webchatRealTime-Spring-Boot
 cd cn-DA22TTD-vochihai-chat-app-real-time-Spring-Boot
 ```
 
