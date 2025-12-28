@@ -1,6 +1,4 @@
 # Tên đề tài: Xây dựng web chat real-time sử dụng Angular và Spring Boot
-<img width="1111" height="552" alt="image" src="https://github.com/user-attachments/assets/17eb3cfa-096f-404d-9105-a4d0ef4f7df9" /> <br>
-
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat&logo=angular&logoColor=white)](https://angular.io/)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
@@ -448,7 +446,7 @@ redis-cli ping
 
 ## 📝 License
 
-Dự án này được phát hành dưới giấy phép MIT. Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
+Dự án này được phát hành dưới giấy phép MIT. Xem file [LICENSE](./LICENSE) để biết thêm chi tiết.
 
 ---
 
