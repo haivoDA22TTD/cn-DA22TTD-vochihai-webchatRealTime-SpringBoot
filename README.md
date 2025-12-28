@@ -446,7 +446,7 @@ redis-cli ping
 
 ## 📝 License
 
-Dự án này được phát hành dưới giấy phép MIT. Xem file [LICENSE](./LICENSE) để biết thêm chi tiết.
+Dự án này được phát hành dưới giấy phép MIT. Xem file [LICENSE](./License) để biết thêm chi tiết.
 
 ---
 
