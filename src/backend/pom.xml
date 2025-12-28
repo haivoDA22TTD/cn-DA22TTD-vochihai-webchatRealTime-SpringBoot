@@ -23,7 +23,7 @@
     </properties>
 
     <dependencies>
-        <!-- Các dependency của bạn giữ nguyên 100% -->
+        <!-- Các dependency  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -50,7 +50,7 @@
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
-        <!-- Lombok giữ nguyên -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -100,7 +100,7 @@
             <scope>runtime</scope>
         </dependency>
         
-        <!-- Jsoup - HTML parser để lấy Open Graph metadata từ URL -->
+        
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
@@ -108,7 +108,7 @@
         </dependency>
     </dependencies>
 
-    <!-- ĐOẠN NÀY LÀ QUAN TRỌNG NHẤT - THAY TOÀN BỘ <build> HIỆN TẠI BẰNG ĐOẠN NÀY -->
+    
     <build>
         <plugins>
             <!-- Spring Boot plugin -->
@@ -132,7 +132,7 @@
                 <version>3.13.0</version>
                 <configuration>
                     <release>17</release>
-                    <!-- Bắt buộc với Lombok 1.18.20+ -->
+                    
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
