@@ -412,7 +412,7 @@ Sau khi chạy backend, truy cập Swagger UI để xem chi tiết API:
 ## 🐛 Xử lý lỗi thường gặp
 
 ### 1. Lỗi "Image not found"
-Đảm bảo đã cấu hình đúng trong `SecurityConfig.java`:
+Đảm bảo đã cấu hình đúng trong file`SecurityConfig.java`:
 ```java
 .requestMatchers("/uploads/**", "/images/**").permitAll()
 ```
